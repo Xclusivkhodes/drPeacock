@@ -1,0 +1,1013 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#E8EEF6;font-family:'Poppins',system-ui,sans-serif}
+a{color:#1565C0;text-decoration:none}a:hover{color:#0D47A1}
+@keyframes dpPulse{0%,100%{transform:scale(.6);opacity:.35}50%{transform:scale(1);opacity:1}}
+@keyframes dpFloat{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+</style>
+</helmet>
+
+<div style="min-height:100vh;display:flex;align-items:center;justify-content:center;padding:36px;box-sizing:border-box;background:radial-gradient(circle at 50% 0%,#F5F7FA 0%,#DCE6F2 100%)">
+<x-import component-from-global-scope="IOSDevice" from="./ios-frame.jsx" hint-size="402px,874px">
+<div style="height:874px;display:flex;flex-direction:column;background:#F5F7FA;font-family:'Poppins',system-ui,sans-serif;color:#2D3748">
+<div style="flex:1;min-height:0;overflow-y:auto">
+
+<sc-if value="{{ isWelcome }}" hint-placeholder-val="{{ true }}">
+<div style="min-height:874px;box-sizing:border-box;padding:68px 28px 30px;background:linear-gradient(180deg,#E3EDFB 0%,#F5F7FA 62%,#FFFFFF 100%);display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:9px">
+    <svg width="30" height="30" viewBox="0 0 24 24"><path d="M12 21s-8-5.1-8-11a4.7 4.7 0 018-3.3A4.7 4.7 0 0120 10c0 5.9-8 11-8 11z" fill="#1565C0"></path><path d="M5 12h3l1.6-2.6L12 15l1.8-3H19" stroke="#FFFFFF" stroke-width="1.6" fill="none" stroke-linejoin="round"></path></svg>
+    <div style="font-weight:700;font-size:17px;color:#0D47A1;letter-spacing:-.3px">Dr. <span style="color:#26A69A">Peacock</span></div>
+  </div>
+  <div style="align-self:center;width:190px;height:388px;margin-top:0;animation:dpFloat 5s ease-in-out infinite;position:relative">
+    <dc-import name="Mascot" pose="hello" hint-size="100%,100%"></dc-import>
+  </div>
+  <div style="margin-top:-4px;font-weight:700;font-size:38px;line-height:1.05;letter-spacing:-1.1px;color:#0D47A1">Your health,<br>our pride.</div>
+  <div style="margin-top:12px;font-size:15.5px;line-height:1.55;color:rgba(45,55,72,.66);max-width:308px;text-wrap:pretty">I'm Dr. Peacock. Tell me how you feel and I'll guide you to the right care — in your own language.</div>
+  <div style="flex:1;min-height:20px"></div>
+  <div style="display:flex;flex-direction:column;gap:11px">
+    <div onClick="{{ goSetup }}" style="height:58px;border-radius:18px;background:#1565C0;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16.5px;cursor:pointer;box-shadow:0 12px 24px rgba(21,101,192,.28)" style-hover="background:#0D47A1">Get started</div>
+    <div onClick="{{ goHome }}" style="height:54px;border-radius:18px;background:#FFFFFF;border:1.5px solid #D6E2F2;color:#0D47A1;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15.5px;cursor:pointer" style-hover="border-color:#26A69A">I already have an account</div>
+    <div style="text-align:center;font-size:11.5px;color:rgba(45,55,72,.45);margin-top:2px">Guidance only — Dr. Peacock never replaces a doctor.</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSetup }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:874px;box-sizing:border-box;padding:58px 20px 26px;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div onClick="{{ setupBack }}" style="width:38px;height:38px;flex:none;border-radius:12px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(13,71,161,.07)">
+      <svg width="17" height="17" viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8" stroke="#0D47A1" stroke-width="2.4" fill="none" stroke-linecap="round"></path></svg>
+    </div>
+    <div style="flex:1;height:6px;border-radius:99px;background:#E3E9F2;overflow:hidden">
+      <div style="width:{{ setupPct }};height:100%;background:linear-gradient(90deg,#1565C0,#26A69A);border-radius:99px;transition:width .3s ease"></div>
+    </div>
+    <div style="font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:rgba(45,55,72,.45);white-space:nowrap">{{ setupStepLabel }}</div>
+  </div>
+
+  <sc-if value="{{ setupIsForm }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex;flex-direction:column">
+    <div style="margin-top:14px;display:flex;gap:10px;align-items:flex-end">
+      <div style="width:72px;height:88px;flex:none;position:relative"><dc-import name="Mascot" pose="caring" hint-size="100%,100%"></dc-import></div>
+      <div style="flex:1;background:#FFFFFF;border-radius:18px 18px 18px 4px;padding:12px 15px;font-size:13.5px;line-height:1.45;box-shadow:0 6px 18px rgba(13,71,161,.07)">{{ setupBubble }}</div>
+    </div>
+    <div style="margin-top:18px;font-weight:700;font-size:26px;letter-spacing:-.7px;line-height:1.15;color:#0D47A1">{{ setupTitle }}</div>
+    <div style="margin-top:6px;font-size:13.5px;line-height:1.5;color:rgba(45,55,72,.55);text-wrap:pretty">{{ setupSub }}</div>
+
+    <sc-if value="{{ setupHasIdentity }}" hint-placeholder-val="{{ true }}">
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:11px">
+      <div style="background:#FFFFFF;border-radius:16px;padding:13px 16px;box-shadow:0 4px 14px rgba(13,71,161,.06)">
+        <div style="font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:rgba(45,55,72,.45)">Full name</div>
+        <input type="text" value="{{ pName }}" onChange="{{ onName }}" placeholder="Your name" style="width:100%;box-sizing:border-box;margin-top:4px;border:none;outline:none;background:transparent;font-family:'Poppins',system-ui,sans-serif;font-size:16px;font-weight:600;color:#2D3748">
+      </div>
+      <div style="display:flex;gap:11px">
+        <div style="flex:1;background:#FFFFFF;border-radius:16px;padding:13px 16px;box-shadow:0 4px 14px rgba(13,71,161,.06)">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:rgba(45,55,72,.45)">Age</div>
+          <input type="number" value="{{ pAge }}" onChange="{{ onAge }}" style="width:100%;box-sizing:border-box;margin-top:4px;border:none;outline:none;background:transparent;font-family:'Poppins',system-ui,sans-serif;font-size:16px;font-weight:600;color:#2D3748">
+        </div>
+        <div style="flex:1.5;background:#FFFFFF;border-radius:16px;padding:13px 16px;box-shadow:0 4px 14px rgba(13,71,161,.06)">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:rgba(45,55,72,.45)">Town or city</div>
+          <input type="text" value="{{ pCity }}" onChange="{{ onCity }}" style="width:100%;box-sizing:border-box;margin-top:4px;border:none;outline:none;background:transparent;font-family:'Poppins',system-ui,sans-serif;font-size:16px;font-weight:600;color:#2D3748">
+        </div>
+      </div>
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ setupHasBody }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:11px">
+      <div style="background:#FFFFFF;border-radius:16px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(13,71,161,.06)">
+        <div style="flex:1">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:rgba(45,55,72,.45)">Height</div>
+          <div style="margin-top:3px;font-size:18px;font-weight:600">{{ pHeight }} cm</div>
+        </div>
+        <div onClick="{{ heightDown }}" style="width:40px;height:40px;border-radius:13px;background:#F0F3F8;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:19px;font-weight:600;color:#0D47A1" style-hover="background:#E4EAF4">−</div>
+        <div onClick="{{ heightUp }}" style="width:40px;height:40px;border-radius:13px;background:#E3EFFB;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:19px;font-weight:600;color:#0D47A1" style-hover="background:#D3E5F9">+</div>
+      </div>
+      <div style="background:#FFFFFF;border-radius:16px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 4px 14px rgba(13,71,161,.06)">
+        <div style="flex:1">
+          <div style="font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:rgba(45,55,72,.45)">Weight</div>
+          <div style="margin-top:3px;font-size:18px;font-weight:600">{{ pWeight }} kg</div>
+        </div>
+        <div onClick="{{ weightDown }}" style="width:40px;height:40px;border-radius:13px;background:#F0F3F8;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:19px;font-weight:600;color:#0D47A1" style-hover="background:#E4EAF4">−</div>
+        <div onClick="{{ weightUp }}" style="width:40px;height:40px;border-radius:13px;background:#E3EFFB;display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:19px;font-weight:600;color:#0D47A1" style-hover="background:#D3E5F9">+</div>
+      </div>
+      <div style="display:flex;align-items:center;gap:9px;padding:0 4px;font-size:12.5px;font-weight:500;color:rgba(45,55,72,.55)">
+        <div style="padding:5px 10px;border-radius:9px;background:#E0F2F1;color:#00695C;font-weight:600;font-size:12px">BMI {{ bmi }}</div>
+        <div>{{ bmiBand }}</div>
+      </div>
+    </div>
+    </sc-if>
+
+    <div style="margin-top:18px;display:flex;flex-direction:column;gap:16px">
+      <sc-for list="{{ setupGroups }}" as="g" hint-placeholder-count="2">
+        <div>
+          <div style="font-size:13px;font-weight:600;color:rgba(45,55,72,.6)">{{ g.label }}</div>
+          <div style="margin-top:9px;display:flex;flex-wrap:wrap;gap:8px">
+            <sc-for list="{{ g.options }}" as="o" hint-placeholder-count="5">
+              <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
+                <div onClick="{{ o.pick }}" style="padding:10px 15px;border-radius:13px;background:#1565C0;color:#FFFFFF;font-size:13.5px;font-weight:600;cursor:pointer">{{ o.name }}</div>
+              </sc-if>
+              <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}">
+                <div onClick="{{ o.pick }}" style="padding:10px 15px;border-radius:13px;background:#FFFFFF;color:#2D3748;font-size:13.5px;font-weight:500;cursor:pointer;border:1.5px solid #E3E9F2" style-hover="border-color:#26A69A">{{ o.name }}</div>
+              </sc-if>
+            </sc-for>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+
+    <sc-if value="{{ setupHasMeds }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:16px;background:#FFFFFF;border-radius:16px;padding:13px 16px;box-shadow:0 4px 14px rgba(13,71,161,.06)">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.7px;text-transform:uppercase;color:rgba(45,55,72,.45)">Medicines you take now</div>
+      <input type="text" value="{{ pMeds }}" onChange="{{ onMeds }}" placeholder="e.g. Salbutamol inhaler, as needed" style="width:100%;box-sizing:border-box;margin-top:4px;border:none;outline:none;background:transparent;font-family:'Poppins',system-ui,sans-serif;font-size:15px;font-weight:500;color:#2D3748">
+    </div>
+    </sc-if>
+
+    <sc-if value="{{ setupHasConsent }}" hint-placeholder-val="{{ false }}">
+    <div style="margin-top:16px;display:flex;flex-direction:column;gap:10px">
+      <div onClick="{{ toggleStore }}" style="background:#FFFFFF;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 4px 14px rgba(13,71,161,.06)">
+        <div style="flex:1">
+          <div style="font-size:14.5px;font-weight:600">Keep my record on this phone</div>
+          <div style="margin-top:2px;font-size:12.5px;color:rgba(45,55,72,.5);line-height:1.4">Encrypted, works offline, never sold.</div>
+        </div>
+        <sc-if value="{{ consentStore }}" hint-placeholder-val="{{ true }}">
+          <div style="width:46px;height:28px;border-radius:99px;background:#43A047;display:flex;align-items:center;justify-content:flex-end;padding:3px;box-sizing:border-box;flex:none"><div style="width:22px;height:22px;border-radius:99px;background:#FFFFFF"></div></div>
+        </sc-if>
+        <sc-if value="{{ consentStoreOff }}" hint-placeholder-val="{{ false }}">
+          <div style="width:46px;height:28px;border-radius:99px;background:#DDE4EE;display:flex;align-items:center;padding:3px;box-sizing:border-box;flex:none"><div style="width:22px;height:22px;border-radius:99px;background:#FFFFFF"></div></div>
+        </sc-if>
+      </div>
+      <div onClick="{{ toggleShare }}" style="background:#FFFFFF;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:12px;cursor:pointer;box-shadow:0 4px 14px rgba(13,71,161,.06)">
+        <div style="flex:1">
+          <div style="font-size:14.5px;font-weight:600">Share a summary with clinics I visit</div>
+          <div style="margin-top:2px;font-size:12.5px;color:rgba(45,55,72,.5);line-height:1.4">Only when you tap share at the facility.</div>
+        </div>
+        <sc-if value="{{ consentShare }}" hint-placeholder-val="{{ false }}">
+          <div style="width:46px;height:28px;border-radius:99px;background:#43A047;display:flex;align-items:center;justify-content:flex-end;padding:3px;box-sizing:border-box;flex:none"><div style="width:22px;height:22px;border-radius:99px;background:#FFFFFF"></div></div>
+        </sc-if>
+        <sc-if value="{{ consentShareOff }}" hint-placeholder-val="{{ true }}">
+          <div style="width:46px;height:28px;border-radius:99px;background:#DDE4EE;display:flex;align-items:center;padding:3px;box-sizing:border-box;flex:none"><div style="width:22px;height:22px;border-radius:99px;background:#FFFFFF"></div></div>
+        </sc-if>
+      </div>
+    </div>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ setupIsSummary }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex;flex-direction:column">
+    <div style="margin-top:6px;display:flex;align-items:flex-end;gap:6px">
+      <div style="flex:1;padding-bottom:10px">
+        <div style="font-weight:700;font-size:27px;letter-spacing:-.8px;line-height:1.1;color:#0D47A1">Your profile is<br>ready, {{ firstName }}</div>
+        <div style="margin-top:8px;font-size:13.5px;line-height:1.5;color:rgba(45,55,72,.58)">Here's what changes now that I know you.</div>
+      </div>
+      <div style="width:118px;height:210px;flex:none;margin-right:-10px;position:relative"><dc-import name="Mascot" pose="celebrating" hint-size="100%,100%"></dc-import></div>
+    </div>
+    <div style="margin-top:8px;display:flex;flex-direction:column;gap:10px">
+      <sc-for list="{{ tailoredItems }}" as="t" hint-placeholder-count="4">
+        <div style="background:#FFFFFF;border-radius:18px;padding:14px 16px;box-shadow:0 6px 18px rgba(13,71,161,.07)">
+          <div style="font-size:14.5px;font-weight:600;color:#0D47A1">{{ t.title }}</div>
+          <div style="margin-top:4px;font-size:13px;line-height:1.5;color:rgba(45,55,72,.6);text-wrap:pretty">{{ t.desc }}</div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top:12px;background:#E0F2F1;border-radius:16px;padding:13px 16px;font-size:12.5px;line-height:1.5;color:#00695C">You can change any of this later in your health record — and delete everything in one tap.</div>
+  </div>
+  </sc-if>
+
+  <div style="flex:1;min-height:18px"></div>
+  <div onClick="{{ setupNext }}" style="margin-top:20px;height:58px;border-radius:18px;background:#1565C0;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16.5px;cursor:pointer;box-shadow:0 12px 24px rgba(21,101,192,.24)" style-hover="background:#0D47A1">{{ setupCta }}</div>
+  <div onClick="{{ goHome }}" style="margin-top:11px;text-align:center;font-size:13.5px;font-weight:600;color:rgba(45,55,72,.45);cursor:pointer;padding:4px">{{ setupSkip }}</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isHome }}" hint-placeholder-val="{{ false }}">
+<div style="padding:62px 20px 26px">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div>
+      <div style="font-size:13px;font-weight:500;color:rgba(45,55,72,.5)">{{ greeting }}</div>
+      <div style="font-weight:700;font-size:25px;letter-spacing:-.6px;margin-top:1px;color:#0D47A1">{{ firstName }}</div>
+    </div>
+    <div style="display:flex;gap:9px;align-items:center">
+      <div onClick="{{ goEmergency }}" style="height:40px;padding:0 14px;border-radius:13px;background:#FFE5E3;color:#C62828;font-size:12.5px;font-weight:700;display:flex;align-items:center;cursor:pointer" style-hover="background:#FFD5D2">SOS</div>
+      <div style="width:42px;height:42px;border-radius:14px;background:#0D47A1;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:14px">{{ initials }}</div>
+    </div>
+  </div>
+
+  <div onClick="{{ goChat }}" style="margin-top:16px;border-radius:24px;background:linear-gradient(135deg,#0D47A1 0%,#1565C0 62%,#26A69A 130%);padding:18px;display:flex;align-items:flex-end;gap:4px;cursor:pointer;box-shadow:0 16px 30px rgba(13,71,161,.22);overflow:hidden">
+    <div style="flex:1;padding-bottom:4px">
+      <div style="color:rgba(255,255,255,.72);font-size:11px;font-weight:600;letter-spacing:1.2px;text-transform:uppercase">Dr. Peacock</div>
+      <div style="margin-top:8px;color:#FFFFFF;font-weight:600;font-size:19px;line-height:1.3;letter-spacing:-.3px">{{ heroLine }}</div>
+      <div style="margin-top:13px;display:inline-flex;align-items:center;gap:8px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.24);padding:9px 14px;border-radius:12px;color:#FFFFFF;font-size:13px;font-weight:600">Start a conversation</div>
+    </div>
+    <div style="width:104px;height:200px;flex:none;margin-right:-12px;margin-bottom:-30px;position:relative"><dc-import name="Mascot" pose="confident" hint-size="100%,100%"></dc-import></div>
+  </div>
+
+  <div style="margin-top:18px;display:grid;grid-template-columns:1fr 1fr;gap:11px">
+    <div onClick="{{ goSymptoms }}" style="background:#FFFFFF;border-radius:20px;padding:16px;cursor:pointer;box-shadow:0 6px 18px rgba(13,71,161,.07)" style-hover="box-shadow:0 12px 26px rgba(13,71,161,.14)">
+      <div style="width:38px;height:38px;border-radius:12px;background:#E3EFFB;display:flex;align-items:center;justify-content:center">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="#1565C0" stroke-width="2.8" stroke-linecap="round"></path></svg>
+      </div>
+      <div style="margin-top:30px;font-weight:600;font-size:15.5px">Check symptoms</div>
+      <div style="margin-top:3px;font-size:12.5px;color:rgba(45,55,72,.5);line-height:1.35">Text, voice or a photo</div>
+    </div>
+    <div onClick="{{ goCare }}" style="background:#FFFFFF;border-radius:20px;padding:16px;cursor:pointer;box-shadow:0 6px 18px rgba(13,71,161,.07)" style-hover="box-shadow:0 12px 26px rgba(13,71,161,.14)">
+      <div style="width:38px;height:38px;border-radius:12px;background:#E0F2F1;display:flex;align-items:center;justify-content:center">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M12 2C8 2 4.8 5.2 4.8 9.2 4.8 14.4 12 22 12 22s7.2-7.6 7.2-12.8C19.2 5.2 16 2 12 2z" fill="#26A69A"></path><circle cx="12" cy="9.2" r="2.6" fill="#FFFFFF"></circle></svg>
+      </div>
+      <div style="margin-top:30px;font-weight:600;font-size:15.5px">Find care</div>
+      <div style="margin-top:3px;font-size:12.5px;color:rgba(45,55,72,.5);line-height:1.35">Right facility, not just near</div>
+    </div>
+    <div onClick="{{ goChat }}" style="background:#FFFFFF;border-radius:20px;padding:16px;cursor:pointer;box-shadow:0 6px 18px rgba(13,71,161,.07)" style-hover="box-shadow:0 12px 26px rgba(13,71,161,.14)">
+      <div style="width:38px;height:38px;border-radius:12px;background:#E7F6E8;display:flex;align-items:center;justify-content:center">
+        <svg width="20" height="20" viewBox="0 0 24 24"><path d="M4 5h16v11h-9l-5 4v-4H4z" fill="#43A047"></path></svg>
+      </div>
+      <div style="margin-top:30px;font-weight:600;font-size:15.5px">Ask a question</div>
+      <div style="margin-top:3px;font-size:12.5px;color:rgba(45,55,72,.5);line-height:1.35">Prescriptions, terms, prep</div>
+    </div>
+    <div onClick="{{ goProfile }}" style="background:#FFFFFF;border-radius:20px;padding:16px;cursor:pointer;box-shadow:0 6px 18px rgba(13,71,161,.07)" style-hover="box-shadow:0 12px 26px rgba(13,71,161,.14)">
+      <div style="width:38px;height:38px;border-radius:12px;background:#FFF4DE;display:flex;align-items:center;justify-content:center">
+        <svg width="20" height="20" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="3" fill="#FFB300"></rect><path d="M9 9h6M9 13h6M9 17h3" stroke="#FFFFFF" stroke-width="1.9" stroke-linecap="round"></path></svg>
+      </div>
+      <div style="margin-top:30px;font-weight:600;font-size:15.5px">Health record</div>
+      <div style="margin-top:3px;font-size:12.5px;color:rgba(45,55,72,.5);line-height:1.35">Yours, offline too</div>
+    </div>
+  </div>
+
+  <div style="margin-top:18px;background:#FFFFFF;border-radius:20px;padding:12px 16px 12px 10px;display:flex;align-items:center;gap:10px;box-shadow:0 6px 18px rgba(13,71,161,.07)">
+    <div style="width:56px;height:88px;flex:none;position:relative"><dc-import name="Mascot" pose="reminder" hint-size="100%,100%"></dc-import></div>
+    <div style="flex:1">
+      <div style="font-weight:600;font-size:14.5px">Coartem — 2 tablets</div>
+      <div style="font-size:12.5px;color:rgba(45,55,72,.5);margin-top:2px">Today, 8:00 PM · with food</div>
+    </div>
+    <div onClick="{{ goCelebrate }}" style="padding:9px 14px;border-radius:12px;background:#E7F6E8;color:#2E7D32;font-size:13px;font-weight:600;cursor:pointer" style-hover="background:#D6EFD8">Taken</div>
+  </div>
+
+  <div style="margin-top:20px;display:flex;align-items:baseline;justify-content:space-between">
+    <div style="font-weight:600;font-size:17px;color:#0D47A1">Near you now</div>
+    <div onClick="{{ goCare }}" style="font-size:13px;font-weight:600;color:#1565C0;cursor:pointer">See all</div>
+  </div>
+  <div onClick="{{ goCare }}" style="margin-top:10px;background:#FFFFFF;border-radius:20px;padding:16px;box-shadow:0 6px 18px rgba(13,71,161,.07);cursor:pointer">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+      <div style="font-weight:600;font-size:15px;line-height:1.3">Adabraka Polyclinic</div>
+      <div style="padding:5px 10px;border-radius:9px;background:#E7F6E8;color:#2E7D32;font-size:11px;font-weight:600;white-space:nowrap">Open now</div>
+    </div>
+    <div style="margin-top:9px;display:flex;gap:14px;font-size:12.5px;color:rgba(45,55,72,.55);font-weight:500">
+      <div>1.3 km</div><div>~15 min wait</div><div>₵ low cost</div>
+    </div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCelebrate }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:874px;box-sizing:border-box;padding:120px 30px 40px;display:flex;flex-direction:column;align-items:center;text-align:center;background:linear-gradient(180deg,#E7F6E8 0%,#F5F7FA 70%)">
+  <div style="width:250px;height:290px;position:relative"><dc-import name="Mascot" pose="celebrating" hint-size="100%,100%"></dc-import></div>
+  <div style="margin-top:14px;font-weight:700;font-size:27px;letter-spacing:-.7px;color:#0D47A1">Dose 4 of 6 done</div>
+  <div style="margin-top:10px;font-size:15px;line-height:1.55;color:rgba(45,55,72,.62);max-width:280px">Two days to go. Finishing the full course is what clears malaria for good.</div>
+  <div style="margin-top:22px;width:100%;background:#FFFFFF;border-radius:20px;padding:16px;box-shadow:0 6px 18px rgba(13,71,161,.07)">
+    <div style="display:flex;gap:7px">
+      <div style="flex:1;height:9px;border-radius:99px;background:#43A047"></div>
+      <div style="flex:1;height:9px;border-radius:99px;background:#43A047"></div>
+      <div style="flex:1;height:9px;border-radius:99px;background:#43A047"></div>
+      <div style="flex:1;height:9px;border-radius:99px;background:#43A047"></div>
+      <div style="flex:1;height:9px;border-radius:99px;background:#E3E9F2"></div>
+      <div style="flex:1;height:9px;border-radius:99px;background:#E3E9F2"></div>
+    </div>
+    <div style="margin-top:12px;font-size:13px;font-weight:500;color:rgba(45,55,72,.6)">Next dose reminder: tomorrow, 8:00 AM</div>
+  </div>
+  <div onClick="{{ goHome }}" style="margin-top:20px;width:100%;height:56px;border-radius:18px;background:#1565C0;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16px;cursor:pointer" style-hover="background:#0D47A1">Back home</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isSymptoms }}" hint-placeholder-val="{{ false }}">
+<div style="padding:62px 20px 26px">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div onClick="{{ goHome }}" style="width:40px;height:40px;border-radius:13px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(13,71,161,.07)">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8" stroke="#0D47A1" stroke-width="2.4" fill="none" stroke-linecap="round"></path></svg>
+    </div>
+    <div style="font-size:11.5px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;color:rgba(45,55,72,.45);white-space:nowrap">Step 1 of 3</div>
+  </div>
+  <div style="margin-top:16px;display:flex;gap:10px;align-items:flex-end">
+    <div style="width:70px;height:132px;flex:none;position:relative"><dc-import name="Mascot" pose="explaining" hint-size="100%,100%"></dc-import></div>
+    <div style="background:#FFFFFF;border-radius:18px 18px 18px 4px;padding:14px 16px;font-size:15px;line-height:1.4;font-weight:600;box-shadow:0 6px 18px rgba(13,71,161,.07)">What are you experiencing?</div>
+  </div>
+  <div style="margin-top:16px;background:#FFFFFF;border-radius:20px;padding:16px;box-shadow:0 6px 18px rgba(13,71,161,.07)">
+    <div style="min-height:52px;font-size:15.5px;line-height:1.45">{{ symptomText }}</div>
+    <div style="margin-top:12px;display:flex;gap:9px;align-items:center">
+      <div style="height:42px;padding:0 14px;border-radius:13px;background:#E3EFFB;color:#1565C0;display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;cursor:pointer" style-hover="background:#D3E5F9">
+        <svg width="15" height="15" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3" fill="#1565C0"></rect><path d="M5 11a7 7 0 0014 0M12 18v4" stroke="#1565C0" stroke-width="2" fill="none" stroke-linecap="round"></path></svg>
+        Speak in Twi
+      </div>
+      <div style="height:42px;padding:0 14px;border-radius:13px;background:#F0F3F8;color:rgba(45,55,72,.7);display:flex;align-items:center;gap:7px;font-size:13px;font-weight:600;cursor:pointer" style-hover="background:#E6EBF3">
+        <svg width="15" height="15" viewBox="0 0 24 24"><rect x="3" y="6" width="18" height="14" rx="3" fill="none" stroke="#2D3748" stroke-width="2"></rect><circle cx="12" cy="13" r="3.4" fill="#2D3748"></circle></svg>
+        Photo
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:20px;font-size:13px;font-weight:600;color:rgba(45,55,72,.6)">Common where you are</div>
+  <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:9px">
+    <sc-for list="{{ symptomOptions }}" as="s" hint-placeholder-count="8">
+      <sc-if value="{{ s.on }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ s.toggle }}" style="padding:11px 16px;border-radius:13px;background:#1565C0;color:#FFFFFF;font-size:14px;font-weight:600;cursor:pointer">{{ s.name }}</div>
+      </sc-if>
+      <sc-if value="{{ s.off }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ s.toggle }}" style="padding:11px 16px;border-radius:13px;background:#FFFFFF;color:#2D3748;font-size:14px;font-weight:500;cursor:pointer;border:1.5px solid #E3E9F2" style-hover="border-color:#26A69A">{{ s.name }}</div>
+      </sc-if>
+    </sc-for>
+  </div>
+  <div onClick="{{ goFollowup }}" style="margin-top:26px;height:58px;border-radius:18px;background:#1565C0;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16.5px;cursor:pointer;box-shadow:0 12px 24px rgba(21,101,192,.24)" style-hover="background:#0D47A1">Continue</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isFollowup }}" hint-placeholder-val="{{ false }}">
+<div style="padding:62px 20px 26px">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div onClick="{{ goSymptoms }}" style="width:40px;height:40px;border-radius:13px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(13,71,161,.07)">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8" stroke="#0D47A1" stroke-width="2.4" fill="none" stroke-linecap="round"></path></svg>
+    </div>
+    <div style="font-size:11.5px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;color:rgba(45,55,72,.45);white-space:nowrap">Step 2 of 3</div>
+  </div>
+  <div style="margin-top:16px;display:flex;align-items:flex-end;gap:8px">
+    <div style="flex:1">
+      <div style="font-weight:700;font-size:26px;letter-spacing:-.7px;line-height:1.15;color:#0D47A1">A few follow-ups</div>
+      <div style="margin-top:5px;font-size:13.5px;color:rgba(45,55,72,.55)">{{ symptomText }}</div>
+    </div>
+    <div style="width:66px;height:126px;flex:none;position:relative"><dc-import name="Mascot" pose="checking" hint-size="100%,100%"></dc-import></div>
+  </div>
+
+  <div style="margin-top:16px;display:flex;flex-direction:column;gap:14px">
+    <sc-for list="{{ questions }}" as="q" hint-placeholder-count="3">
+      <div style="background:#FFFFFF;border-radius:20px;padding:16px;box-shadow:0 6px 18px rgba(13,71,161,.07)">
+        <div style="font-weight:600;font-size:15px">{{ q.label }}</div>
+        <div style="margin-top:11px;display:flex;flex-wrap:wrap;gap:8px">
+          <sc-for list="{{ q.options }}" as="o" hint-placeholder-count="3">
+            <sc-if value="{{ o.on }}" hint-placeholder-val="{{ false }}">
+              <div onClick="{{ o.pick }}" style="padding:10px 14px;border-radius:12px;background:#0D47A1;color:#FFFFFF;font-size:13.5px;font-weight:600;cursor:pointer">{{ o.name }}</div>
+            </sc-if>
+            <sc-if value="{{ o.off }}" hint-placeholder-val="{{ true }}">
+              <div onClick="{{ o.pick }}" style="padding:10px 14px;border-radius:12px;background:#F0F3F8;color:rgba(45,55,72,.75);font-size:13.5px;font-weight:500;cursor:pointer" style-hover="background:#E4EAF4">{{ o.name }}</div>
+            </sc-if>
+          </sc-for>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+  <div onClick="{{ analyze }}" style="margin-top:24px;height:58px;border-radius:18px;background:#26A69A;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:16.5px;cursor:pointer;box-shadow:0 12px 24px rgba(38,166,154,.28)" style-hover="background:#1E8E82">Ask Dr. Peacock</div>
+  <div style="margin-top:11px;text-align:center;font-size:11.5px;color:rgba(45,55,72,.45)">Works offline — results sync when you're back online.</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isAnalyzing }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:874px;box-sizing:border-box;padding:130px 30px 40px;display:flex;flex-direction:column;align-items:center;text-align:center">
+  <div style="width:200px;height:300px;animation:dpFloat 3.4s ease-in-out infinite;position:relative"><dc-import name="Mascot" pose="thinking" hint-size="100%,100%"></dc-import></div>
+  <div style="margin-top:16px;font-weight:700;font-size:24px;letter-spacing:-.6px;color:#0D47A1">Thinking it through…</div>
+  <div style="margin-top:14px;display:flex;gap:8px">
+    <div style="width:10px;height:10px;border-radius:99px;background:#1565C0;animation:dpPulse 1.3s ease-in-out infinite"></div>
+    <div style="width:10px;height:10px;border-radius:99px;background:#26A69A;animation:dpPulse 1.3s ease-in-out .18s infinite"></div>
+    <div style="width:10px;height:10px;border-radius:99px;background:#FFB300;animation:dpPulse 1.3s ease-in-out .36s infinite"></div>
+  </div>
+  <div style="margin-top:30px;width:100%;display:flex;flex-direction:column;gap:10px">
+    <div style="background:#FFFFFF;border-radius:15px;padding:13px 16px;text-align:left;font-size:13.5px;font-weight:500;color:rgba(45,55,72,.7);box-shadow:0 4px 14px rgba(13,71,161,.06)">Matching your symptoms</div>
+    <div style="background:#FFFFFF;border-radius:15px;padding:13px 16px;text-align:left;font-size:13.5px;font-weight:500;color:rgba(45,55,72,.7);box-shadow:0 4px 14px rgba(13,71,161,.06)">Reading your health profile</div>
+    <div style="background:#FFFFFF;border-radius:15px;padding:13px 16px;text-align:left;font-size:13.5px;font-weight:500;color:rgba(45,55,72,.7);box-shadow:0 4px 14px rgba(13,71,161,.06)">Ranking facilities near Adabraka</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isResult }}" hint-placeholder-val="{{ false }}">
+<div style="padding:62px 20px 26px">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div onClick="{{ goHome }}" style="width:40px;height:40px;border-radius:13px;background:#FFFFFF;display:flex;align-items:center;justify-content:center;cursor:pointer;box-shadow:0 4px 12px rgba(13,71,161,.07)">
+      <svg width="18" height="18" viewBox="0 0 24 24"><path d="M15 4l-8 8 8 8" stroke="#0D47A1" stroke-width="2.4" fill="none" stroke-linecap="round"></path></svg>
+    </div>
+    <div style="font-size:11.5px;font-weight:600;letter-spacing:.9px;text-transform:uppercase;color:rgba(45,55,72,.45);white-space:nowrap">Step 3 of 3</div>
+  </div>
+
+  <div style="margin-top:16px;border-radius:24px;background:#FFFFFF;padding:20px;box-shadow:0 10px 26px rgba(13,71,161,.09)">
+    <div style="display:flex;gap:8px;align-items:flex-end">
+      <div style="flex:1;padding-bottom:4px">
+        <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(45,55,72,.45)">Possible concern</div>
+        <div style="margin-top:6px;font-weight:700;font-size:24px;line-height:1.15;letter-spacing:-.7px;color:#0D47A1">Malaria-like symptoms</div>
+        <div style="margin-top:11px;display:inline-flex;align-items:center;gap:8px;background:#FFF4DE;padding:8px 13px;border-radius:11px">
+          <div style="width:9px;height:9px;border-radius:99px;background:#FFB300"></div>
+          <div style="font-size:13px;font-weight:600;color:#96650B">Moderate risk</div>
+        </div>
+      </div>
+      <div style="width:72px;height:138px;flex:none;position:relative"><dc-import name="Mascot" pose="explaining" hint-size="100%,100%"></dc-import></div>
+    </div>
+    <div style="margin-top:14px;height:1px;background:#EDF1F7"></div>
+    <div style="margin-top:14px;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(45,55,72,.45)">Recommended action</div>
+    <div style="margin-top:6px;font-size:16px;font-weight:600;line-height:1.4">Visit a healthcare facility within 24 hours for a malaria test.</div>
+    <div style="margin-top:12px;display:flex;flex-direction:column;gap:7px">
+      <div style="font-size:13.5px;color:rgba(45,55,72,.65);line-height:1.45">• Fever with chills for 2 days is common in malaria season</div>
+      <div style="font-size:13.5px;color:rgba(45,55,72,.65);line-height:1.45">• Your record notes asthma — mention it at the clinic</div>
+      <div style="font-size:13.5px;color:rgba(45,55,72,.65);line-height:1.45">• A polyclinic can test and treat — no hospital needed</div>
+    </div>
+  </div>
+
+  <div style="margin-top:20px;font-weight:600;font-size:17px;color:#0D47A1">Where to go</div>
+  <div style="margin-top:10px;display:flex;flex-direction:column;gap:11px">
+    <sc-for list="{{ resultFacilities }}" as="f" hint-placeholder-count="2">
+      <div style="background:#FFFFFF;border-radius:20px;padding:16px;box-shadow:0 6px 18px rgba(13,71,161,.07)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div>
+            <div style="font-weight:600;font-size:15.5px;line-height:1.3">{{ f.name }}</div>
+            <div style="margin-top:3px;font-size:12.5px;color:rgba(45,55,72,.5);font-weight:500">{{ f.type }}</div>
+          </div>
+          <div style="padding:5px 10px;border-radius:9px;background:#E7F6E8;color:#2E7D32;font-size:11px;font-weight:600;white-space:nowrap">{{ f.status }}</div>
+        </div>
+        <div style="margin-top:10px;display:flex;gap:14px;font-size:12.5px;color:rgba(45,55,72,.55);font-weight:500">
+          <div>{{ f.distance }}</div><div>{{ f.wait }}</div><div>{{ f.cost }}</div>
+        </div>
+        <div style="margin-top:13px;display:flex;gap:9px">
+          <div style="flex:1;height:44px;border-radius:13px;background:#1565C0;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#0D47A1">Directions</div>
+          <div style="flex:1;height:44px;border-radius:13px;background:#F0F3F8;color:#0D47A1;display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#E4EAF4">Book</div>
+          <div style="width:44px;height:44px;border-radius:13px;background:#F0F3F8;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:#E4EAF4">
+            <svg width="17" height="17" viewBox="0 0 24 24"><path d="M6 3h3l2 5-2.5 1.5a10 10 0 006 6L16 13l5 2v3a2 2 0 01-2.2 2A16 16 0 014 5.2 2 2 0 016 3z" fill="#0D47A1"></path></svg>
+          </div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+
+  <div onClick="{{ goChat }}" style="margin-top:16px;background:#E0F2F1;border-radius:20px;padding:12px 16px 12px 8px;display:flex;align-items:center;gap:8px;cursor:pointer" style-hover="background:#D2EBE9">
+    <div style="width:66px;height:78px;flex:none;position:relative"><dc-import name="Mascot" pose="caring" hint-size="100%,100%"></dc-import></div>
+    <div style="flex:1">
+      <div style="font-weight:600;font-size:14.5px;color:#00695C">Something feels off?</div>
+      <div style="margin-top:2px;font-size:12.5px;color:rgba(0,105,92,.7);line-height:1.4">Tell me more and I'll take another look</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;display:flex;gap:9px">
+    <div style="flex:1;height:50px;border-radius:15px;background:#FFFFFF;border:1.5px solid #E3E9F2;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;cursor:pointer" style-hover="border-color:#26A69A">Save report</div>
+    <div onClick="{{ goEmergency }}" style="flex:1;height:50px;border-radius:15px;background:#FFE5E3;color:#C62828;display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;cursor:pointer" style-hover="background:#FFD5D2">It got worse</div>
+  </div>
+  <div style="margin-top:12px;text-align:center;font-size:11.5px;color:rgba(45,55,72,.45);line-height:1.5">Dr. Peacock gives guidance, not a diagnosis.<br>Always confirm with a health worker.</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isEmergency }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:874px;box-sizing:border-box;padding:70px 22px 34px;background:linear-gradient(175deg,#0D47A1 0%,#0B3C87 55%,#08306B 100%);color:#FFFFFF;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;justify-content:space-between">
+    <div style="padding:8px 13px;border-radius:11px;background:#FFB300;color:#4A3000;font-size:11px;font-weight:700;letter-spacing:1.1px;text-transform:uppercase">Emergency mode</div>
+    <div onClick="{{ goHome }}" style="width:38px;height:38px;border-radius:12px;background:rgba(255,255,255,.16);display:flex;align-items:center;justify-content:center;cursor:pointer">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path d="M5 5l14 14M19 5L5 19" stroke="#FFFFFF" stroke-width="2.4" stroke-linecap="round"></path></svg>
+    </div>
+  </div>
+  <div style="margin-top:10px;display:flex;align-items:flex-end;gap:6px">
+    <div style="width:122px;height:250px;flex:none;position:relative"><dc-import name="Mascot" pose="shield" hint-size="100%,100%"></dc-import></div>
+    <div style="flex:1;padding-bottom:16px">
+      <div style="font-weight:700;font-size:30px;line-height:1.05;letter-spacing:-1px">Go now.</div>
+      <div style="margin-top:8px;font-size:14px;line-height:1.45;color:rgba(255,255,255,.8)">Chest pain with breathing difficulty can be life-threatening.</div>
+    </div>
+  </div>
+  <div style="margin-top:14px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:18px">
+    <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.65)">Nearest emergency facility</div>
+    <div style="margin-top:7px;font-weight:600;font-size:19px;line-height:1.25">Korle Bu Teaching Hospital</div>
+    <div style="margin-top:9px;display:flex;gap:14px;font-size:13px;color:rgba(255,255,255,.78);font-weight:500">
+      <div>4.2 km</div><div>Open 24h</div><div>A&amp;E ready</div>
+    </div>
+  </div>
+  <div style="margin-top:12px;background:rgba(0,0,0,.18);border-radius:18px;padding:16px">
+    <div style="font-size:13px;font-weight:600;color:rgba(255,255,255,.9)">While you wait</div>
+    <div style="margin-top:8px;font-size:13px;line-height:1.55;color:rgba(255,255,255,.72)">Sit upright and stay still · Loosen tight clothing · Do not drive yourself · Keep someone with you</div>
+  </div>
+  <div style="flex:1;min-height:18px"></div>
+  <div style="display:flex;flex-direction:column;gap:10px">
+    <div style="height:60px;border-radius:18px;background:#E53935;color:#FFFFFF;display:flex;align-items:center;justify-content:center;gap:10px;font-weight:600;font-size:18px;cursor:pointer;box-shadow:0 12px 24px rgba(229,57,53,.35)" style-hover="background:#C62828">
+      <svg width="19" height="19" viewBox="0 0 24 24"><path d="M6 3h3l2 5-2.5 1.5a10 10 0 006 6L16 13l5 2v3a2 2 0 01-2.2 2A16 16 0 014 5.2 2 2 0 016 3z" fill="#FFFFFF"></path></svg>
+      Call ambulance · 112
+    </div>
+    <div style="height:54px;border-radius:18px;border:1.5px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15.5px;cursor:pointer" style-hover="background:rgba(255,255,255,.1)">Directions to Korle Bu</div>
+    <div onClick="{{ goChat }}" style="text-align:center;font-size:13px;font-weight:500;color:rgba(255,255,255,.6);cursor:pointer;padding:6px">Stay with Dr. Peacock while help comes</div>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isCare }}" hint-placeholder-val="{{ false }}">
+<div style="padding:62px 20px 26px">
+  <div style="display:flex;align-items:flex-end;gap:8px">
+    <div style="flex:1">
+      <div style="font-weight:700;font-size:26px;letter-spacing:-.7px;color:#0D47A1">Find the right care</div>
+      <div style="margin-top:5px;font-size:13.5px;color:rgba(45,55,72,.55);line-height:1.45">Ranked by what you need — not just what's closest.</div>
+    </div>
+    <div style="width:62px;height:120px;flex:none;position:relative"><dc-import name="Mascot" pose="checking" hint-size="100%,100%"></dc-import></div>
+  </div>
+  <div style="margin-top:14px;background:#FFFFFF;border-radius:16px;padding:14px 16px;display:flex;align-items:center;gap:11px;box-shadow:0 6px 18px rgba(13,71,161,.07)">
+    <svg width="18" height="18" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7" fill="none" stroke="rgba(45,55,72,.4)" stroke-width="2.2"></circle><path d="M16.5 16.5L21 21" stroke="rgba(45,55,72,.4)" stroke-width="2.2" stroke-linecap="round"></path></svg>
+    <div style="font-size:15px;color:rgba(45,55,72,.38)">Clinic, service or facility name</div>
+  </div>
+  <div style="margin-top:16px;display:flex;flex-wrap:wrap;gap:9px">
+    <sc-for list="{{ careTypes }}" as="c" hint-placeholder-count="7">
+      <sc-if value="{{ c.on }}" hint-placeholder-val="{{ false }}">
+        <div onClick="{{ c.pick }}" style="padding:11px 16px;border-radius:13px;background:#0D47A1;color:#FFFFFF;font-size:14px;font-weight:600;cursor:pointer">{{ c.name }}</div>
+      </sc-if>
+      <sc-if value="{{ c.off }}" hint-placeholder-val="{{ true }}">
+        <div onClick="{{ c.pick }}" style="padding:11px 16px;border-radius:13px;background:#FFFFFF;color:#2D3748;font-size:14px;font-weight:500;cursor:pointer;border:1.5px solid #E3E9F2" style-hover="border-color:#26A69A">{{ c.name }}</div>
+      </sc-if>
+    </sc-for>
+  </div>
+  <div style="margin-top:18px;display:flex;align-items:center;gap:10px">
+    <div style="font-weight:600;font-size:17px;flex:1;color:#0D47A1">{{ careHeading }}</div>
+    <div style="font-size:12.5px;font-weight:600;color:#26A69A">Best match first</div>
+  </div>
+  <div style="margin-top:10px;display:flex;flex-direction:column;gap:11px">
+    <sc-for list="{{ facilities }}" as="f" hint-placeholder-count="4">
+      <div style="background:#FFFFFF;border-radius:20px;padding:16px;box-shadow:0 6px 18px rgba(13,71,161,.07)">
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
+          <div style="flex:1">
+            <div style="font-weight:600;font-size:15.5px;line-height:1.3">{{ f.name }}</div>
+            <div style="margin-top:3px;font-size:12.5px;color:rgba(45,55,72,.5);font-weight:500">{{ f.type }}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-weight:700;font-size:16px;color:#26A69A">{{ f.score }}</div>
+            <div style="font-size:10px;font-weight:600;color:rgba(45,55,72,.42);letter-spacing:.5px">MATCH</div>
+          </div>
+        </div>
+        <div style="margin-top:10px;display:flex;flex-wrap:wrap;gap:7px">
+          <div style="padding:5px 10px;border-radius:9px;background:#F0F3F8;font-size:11.5px;font-weight:500;color:rgba(45,55,72,.62)">{{ f.distance }}</div>
+          <div style="padding:5px 10px;border-radius:9px;background:#F0F3F8;font-size:11.5px;font-weight:500;color:rgba(45,55,72,.62)">{{ f.wait }}</div>
+          <div style="padding:5px 10px;border-radius:9px;background:#F0F3F8;font-size:11.5px;font-weight:500;color:rgba(45,55,72,.62)">{{ f.cost }}</div>
+          <div style="padding:5px 10px;border-radius:9px;background:#E7F6E8;font-size:11.5px;font-weight:600;color:#2E7D32">{{ f.status }}</div>
+        </div>
+        <div style="margin-top:9px;font-size:12.5px;color:rgba(45,55,72,.55);line-height:1.45">{{ f.note }}</div>
+        <div style="margin-top:13px;display:flex;gap:9px">
+          <div style="flex:1;height:44px;border-radius:13px;background:#1565C0;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#0D47A1">Directions</div>
+          <div style="flex:1;height:44px;border-radius:13px;background:#F0F3F8;color:#0D47A1;display:flex;align-items:center;justify-content:center;font-size:13.5px;font-weight:600;cursor:pointer" style-hover="background:#E4EAF4">Book</div>
+        </div>
+      </div>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isChat }}" hint-placeholder-val="{{ false }}">
+<div style="min-height:874px;box-sizing:border-box;padding:56px 18px 26px;display:flex;flex-direction:column">
+  <div style="display:flex;align-items:center;gap:10px">
+    <div style="width:62px;height:78px;flex:none;position:relative"><dc-import name="Mascot" pose="happy" hint-size="100%,100%"></dc-import></div>
+    <div style="flex:1">
+      <div style="font-weight:700;font-size:18px;letter-spacing:-.3px;color:#0D47A1">Dr. Peacock</div>
+      <div style="display:flex;align-items:center;gap:6px;margin-top:1px">
+        <div style="width:7px;height:7px;border-radius:99px;background:#43A047"></div>
+        <div style="font-size:12px;color:rgba(45,55,72,.5);font-weight:500">Always here · English &amp; Twi</div>
+      </div>
+    </div>
+  </div>
+  <div style="margin-top:10px;flex:1;display:flex;flex-direction:column;gap:11px">
+    <sc-for list="{{ messages }}" as="m" hint-placeholder-count="3">
+      <sc-if value="{{ m.ai }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;gap:8px;align-items:flex-end">
+          <div style="width:42px;height:52px;flex:none;position:relative"><dc-import name="Mascot" pose="happy" hint-size="100%,100%"></dc-import></div>
+          <div style="max-width:272px;background:#FFFFFF;border-radius:18px 18px 18px 5px;padding:13px 16px;font-size:14.5px;line-height:1.5;box-shadow:0 6px 16px rgba(13,71,161,.07)">{{ m.text }}</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ m.me }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:flex-end">
+          <div style="max-width:270px;background:#1565C0;color:#FFFFFF;border-radius:18px 18px 5px 18px;padding:13px 16px;font-size:14.5px;line-height:1.5">{{ m.text }}</div>
+        </div>
+      </sc-if>
+      <sc-if value="{{ m.attach }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex;justify-content:flex-end">
+          <div style="width:186px;background:#FFFFFF;border-radius:16px;padding:10px;box-shadow:0 6px 16px rgba(13,71,161,.07)">
+            <div style="height:100px;border-radius:11px;background:repeating-linear-gradient(135deg,#EEF2F8 0 8px,#E3E9F2 8px 16px);display:flex;align-items:center;justify-content:center;font-family:ui-monospace,Menlo,monospace;font-size:10.5px;color:rgba(45,55,72,.5)">prescription photo</div>
+            <div style="margin-top:8px;font-size:12px;font-weight:500;color:rgba(45,55,72,.6)">IMG_2418.jpg · uploaded</div>
+          </div>
+        </div>
+      </sc-if>
+    </sc-for>
+    <sc-if value="{{ typing }}" hint-placeholder-val="{{ false }}">
+      <div style="display:flex;gap:8px;align-items:flex-end">
+        <div style="width:44px;height:52px;flex:none;position:relative"><dc-import name="Mascot" pose="wink" hint-size="100%,100%"></dc-import></div>
+        <div style="background:#FFFFFF;border-radius:18px 18px 18px 5px;padding:15px;display:flex;gap:6px;box-shadow:0 6px 16px rgba(13,71,161,.07)">
+          <div style="width:8px;height:8px;border-radius:99px;background:#1565C0;animation:dpPulse 1.2s ease-in-out infinite"></div>
+          <div style="width:8px;height:8px;border-radius:99px;background:#26A69A;animation:dpPulse 1.2s ease-in-out .16s infinite"></div>
+          <div style="width:8px;height:8px;border-radius:99px;background:#FFB300;animation:dpPulse 1.2s ease-in-out .32s infinite"></div>
+        </div>
+      </div>
+    </sc-if>
+  </div>
+  <div style="margin-top:14px;display:flex;flex-wrap:wrap;gap:8px">
+    <sc-for list="{{ prompts }}" as="p" hint-placeholder-count="3">
+      <div onClick="{{ p.send }}" style="padding:10px 14px;border-radius:12px;background:#E0F2F1;color:#00695C;font-size:13px;font-weight:600;cursor:pointer" style-hover="background:#D2EBE9">{{ p.name }}</div>
+    </sc-for>
+  </div>
+  <div style="margin-top:11px;background:#FFFFFF;border-radius:18px;padding:10px 11px;display:flex;align-items:center;gap:9px;box-shadow:0 6px 18px rgba(13,71,161,.07)">
+    <div style="flex:1;font-size:14.5px;color:rgba(45,55,72,.36);padding-left:5px">Ask anything about your health…</div>
+    <div style="width:40px;height:40px;border-radius:13px;background:#F0F3F8;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:#E4EAF4">
+      <svg width="17" height="17" viewBox="0 0 24 24"><rect x="9" y="2" width="6" height="12" rx="3" fill="#0D47A1"></rect><path d="M5 11a7 7 0 0014 0M12 18v4" stroke="#0D47A1" stroke-width="2" fill="none" stroke-linecap="round"></path></svg>
+    </div>
+    <div style="width:40px;height:40px;border-radius:13px;background:#1565C0;display:flex;align-items:center;justify-content:center;cursor:pointer" style-hover="background:#0D47A1">
+      <svg width="17" height="17" viewBox="0 0 24 24"><path d="M4 12l16-8-6 8 6 8z" fill="#FFFFFF"></path></svg>
+    </div>
+  </div>
+  <div style="margin-top:9px;text-align:center;font-size:11px;color:rgba(45,55,72,.4)">Follow your doctor's instructions over anything said here.</div>
+</div>
+</sc-if>
+
+<sc-if value="{{ isProfile }}" hint-placeholder-val="{{ false }}">
+<div style="padding:62px 20px 26px">
+  <div style="display:flex;align-items:center;gap:12px">
+    <div style="width:56px;height:56px;border-radius:18px;background:#0D47A1;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:19px">{{ initials }}</div>
+    <div style="flex:1">
+      <div style="font-weight:700;font-size:22px;letter-spacing:-.5px;color:#0D47A1">{{ patientName }}</div>
+      <div style="margin-top:2px;font-size:13px;color:rgba(45,55,72,.5);font-weight:500">{{ profileLine }}</div>
+    </div>
+  </div>
+  <div style="margin-top:16px;background:linear-gradient(135deg,#1565C0,#26A69A);border-radius:20px;padding:16px 4px 16px 18px;color:#FFFFFF;display:flex;align-items:flex-end;gap:4px">
+    <div style="flex:1;padding-bottom:4px">
+      <div style="font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.72)">Record completeness</div>
+      <div style="margin-top:8px;display:flex;align-items:flex-end;gap:8px">
+        <div style="font-weight:700;font-size:30px;line-height:1">78%</div>
+        <div style="font-size:12.5px;color:rgba(255,255,255,.82);padding-bottom:4px;line-height:1.3">Add past visits to<br>improve advice</div>
+      </div>
+      <div style="margin-top:11px;height:7px;border-radius:99px;background:rgba(255,255,255,.28);overflow:hidden">
+        <div style="width:78%;height:100%;background:#FFB300"></div>
+      </div>
+    </div>
+    <div style="width:72px;height:132px;flex:none;margin-bottom:-16px;position:relative"><dc-import name="Mascot" pose="confident" hint-size="100%,100%"></dc-import></div>
+  </div>
+  <div style="margin-top:14px;display:flex;flex-direction:column;gap:10px">
+    <sc-for list="{{ recordSections }}" as="r" hint-placeholder-count="4">
+      <div style="background:#FFFFFF;border-radius:18px;padding:15px 16px;box-shadow:0 6px 18px rgba(13,71,161,.07)">
+        <div style="display:flex;align-items:center;justify-content:space-between;gap:10px">
+          <div style="flex:1;font-size:11px;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:rgba(45,55,72,.45)">{{ r.label }}</div>
+          <div style="font-size:12.5px;font-weight:600;color:#1565C0;cursor:pointer">Edit</div>
+        </div>
+        <div style="margin-top:7px;font-size:15px;font-weight:500;line-height:1.45">{{ r.value }}</div>
+      </div>
+    </sc-for>
+  </div>
+  <div style="margin-top:14px;height:54px;border-radius:16px;background:#1565C0;color:#FFFFFF;display:flex;align-items:center;justify-content:center;font-weight:600;font-size:15px;cursor:pointer" style-hover="background:#0D47A1">Share record with a facility</div>
+  <div onClick="{{ goWelcome }}" style="margin-top:11px;text-align:center;font-size:13.5px;font-weight:600;color:rgba(45,55,72,.45);cursor:pointer;padding:8px">Restart the demo</div>
+</div>
+</sc-if>
+
+</div>
+
+<sc-if value="{{ showTabs }}" hint-placeholder-val="{{ false }}">
+<div style="flex:none;height:86px;padding:10px 14px 22px;box-sizing:border-box;background:rgba(255,255,255,.95);border-top:1px solid #E8EDF5;display:flex;align-items:flex-start;justify-content:space-around;backdrop-filter:blur(14px)">
+  <div onClick="{{ goHome }}" style="width:66px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+    <sc-if value="{{ tabHome }}" hint-placeholder-val="{{ true }}">
+      <svg width="23" height="23" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z" fill="#1565C0"></path></svg>
+      <div style="font-size:10.5px;font-weight:600;color:#1565C0">Home</div>
+    </sc-if>
+    <sc-if value="{{ tabHomeOff }}" hint-placeholder-val="{{ false }}">
+      <svg width="23" height="23" viewBox="0 0 24 24"><path d="M3 11l9-8 9 8v9a1 1 0 01-1 1h-5v-6H9v6H4a1 1 0 01-1-1z" fill="rgba(45,55,72,.28)"></path></svg>
+      <div style="font-size:10.5px;font-weight:500;color:rgba(45,55,72,.4)">Home</div>
+    </sc-if>
+  </div>
+  <div onClick="{{ goCare }}" style="width:66px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+    <sc-if value="{{ tabCare }}" hint-placeholder-val="{{ false }}">
+      <svg width="23" height="23" viewBox="0 0 24 24"><path d="M12 2C8 2 4.8 5.2 4.8 9.2 4.8 14.4 12 22 12 22s7.2-7.6 7.2-12.8C19.2 5.2 16 2 12 2z" fill="#1565C0"></path><circle cx="12" cy="9.2" r="2.6" fill="#FFFFFF"></circle></svg>
+      <div style="font-size:10.5px;font-weight:600;color:#1565C0">Care</div>
+    </sc-if>
+    <sc-if value="{{ tabCareOff }}" hint-placeholder-val="{{ true }}">
+      <svg width="23" height="23" viewBox="0 0 24 24"><path d="M12 2C8 2 4.8 5.2 4.8 9.2 4.8 14.4 12 22 12 22s7.2-7.6 7.2-12.8C19.2 5.2 16 2 12 2z" fill="rgba(45,55,72,.28)"></path><circle cx="12" cy="9.2" r="2.6" fill="#FFFFFF"></circle></svg>
+      <div style="font-size:10.5px;font-weight:500;color:rgba(45,55,72,.4)">Care</div>
+    </sc-if>
+  </div>
+  <div onClick="{{ goSymptoms }}" style="width:66px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer;margin-top:-16px">
+    <div style="width:52px;height:52px;border-radius:17px;background:linear-gradient(140deg,#0D47A1,#26A69A);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 20px rgba(21,101,192,.35)">
+      <svg width="24" height="24" viewBox="0 0 24 24"><path d="M12 5v14M5 12h14" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round"></path></svg>
+    </div>
+    <div style="font-size:10.5px;font-weight:600;color:#0D47A1">Symptoms</div>
+  </div>
+  <div onClick="{{ goChat }}" style="width:66px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+    <sc-if value="{{ tabChat }}" hint-placeholder-val="{{ false }}">
+      <svg width="23" height="23" viewBox="0 0 24 24"><path d="M4 5h16v11h-9l-5 4v-4H4z" fill="#1565C0"></path></svg>
+      <div style="font-size:10.5px;font-weight:600;color:#1565C0">Dr. P</div>
+    </sc-if>
+    <sc-if value="{{ tabChatOff }}" hint-placeholder-val="{{ true }}">
+      <svg width="23" height="23" viewBox="0 0 24 24"><path d="M4 5h16v11h-9l-5 4v-4H4z" fill="rgba(45,55,72,.28)"></path></svg>
+      <div style="font-size:10.5px;font-weight:500;color:rgba(45,55,72,.4)">Dr. P</div>
+    </sc-if>
+  </div>
+  <div onClick="{{ goProfile }}" style="width:66px;display:flex;flex-direction:column;align-items:center;gap:5px;cursor:pointer">
+    <sc-if value="{{ tabProfile }}" hint-placeholder-val="{{ false }}">
+      <svg width="23" height="23" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="3.4" fill="#1565C0"></rect><path d="M9 9h6M9 13h6M9 17h3" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      <div style="font-size:10.5px;font-weight:600;color:#1565C0">Record</div>
+    </sc-if>
+    <sc-if value="{{ tabProfileOff }}" hint-placeholder-val="{{ true }}">
+      <svg width="23" height="23" viewBox="0 0 24 24"><rect x="5" y="3" width="14" height="18" rx="3.4" fill="rgba(45,55,72,.28)"></rect><path d="M9 9h6M9 13h6M9 17h3" stroke="#FFFFFF" stroke-width="1.8" stroke-linecap="round"></path></svg>
+      <div style="font-size:10.5px;font-weight:500;color:rgba(45,55,72,.4)">Record</div>
+    </sc-if>
+  </div>
+</div>
+</sc-if>
+
+</div>
+</x-import>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;patientName&quot;:{&quot;editor&quot;:&quot;text&quot;,&quot;default&quot;:&quot;Ama Mensah&quot;,&quot;tsType&quot;:&quot;string&quot;},&quot;tone&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;warm&quot;,&quot;clinical&quot;],&quot;default&quot;:&quot;warm&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const SYMPTOMS = ['Fever', 'Headache', 'Chills', 'Cough', 'Chest pain', 'Stomach pain', 'Rash', 'Difficulty breathing', 'Vomiting', 'Fatigue'];
+const LANGS = ['English', 'Twi', 'Ewe', 'Ga', 'Hausa', 'Dagbani'];
+const CARE = ['Emergency', 'General', 'Maternity', 'Children', 'Dental', 'Laboratory', 'Pharmacy'];
+const QUESTIONS = [
+  { key: 'onset', label: 'When did it start?', options: ['Today', '2–3 days ago', 'Over a week'] },
+  { key: 'severity', label: 'How severe does it feel?', options: ['Mild', 'Uncomfortable', 'Severe'] },
+  { key: 'history', label: 'Anything we should know?', options: ['Asthma', 'Pregnant', 'Diabetes', 'None'] },
+];
+const FACILITIES = {
+  General: [
+    { name: 'Adabraka Polyclinic', type: 'Polyclinic · Lab on site', score: '96%', distance: '1.3 km', wait: '~15 min', cost: '₵ low', status: 'Open now', note: 'Malaria testing and treatment same visit.' },
+    { name: 'Ridge Hospital', type: 'Regional hospital · Full services', score: '88%', distance: '2.8 km', wait: '~35 min', cost: '₵₵ medium', status: 'Open now', note: 'Busier, but specialists available today.' },
+    { name: 'Mamprobi Community Clinic', type: 'Community clinic', score: '74%', distance: '3.6 km', wait: '~10 min', cost: '₵ low', status: 'Open now', note: 'No lab — you may be referred for tests.' },
+    { name: 'Korle Bu Teaching Hospital', type: 'Teaching hospital · A&E 24h', score: '61%', distance: '4.2 km', wait: '~90 min', cost: '₵₵ medium', status: 'Open 24h', note: 'More care than you need right now.' },
+  ],
+  Emergency: [
+    { name: 'Korle Bu Teaching Hospital', type: 'Teaching hospital · A&E 24h', score: '99%', distance: '4.2 km', wait: 'Triage on arrival', cost: '₵₵ medium', status: 'Open 24h', note: 'Cardiac and trauma capable, ambulance bay.' },
+    { name: 'Ridge Hospital', type: 'Regional hospital · A&E', score: '92%', distance: '2.8 km', wait: '~20 min', cost: '₵₵ medium', status: 'Open 24h', note: 'Closer, emergency ward open.' },
+  ],
+  Maternity: [
+    { name: 'Ridge Hospital Maternity Block', type: 'Maternity · Neonatal unit', score: '97%', distance: '2.8 km', wait: '~25 min', cost: '₵₵ medium', status: 'Open 24h', note: 'Midwives on duty, ultrasound available.' },
+    { name: 'La General Hospital', type: 'District hospital · Maternity', score: '84%', distance: '5.4 km', wait: '~40 min', cost: '₵ low', status: 'Open 24h', note: 'Antenatal clinic Tue & Thu.' },
+  ],
+  Children: [
+    { name: 'Princess Marie Louise Children’s Hospital', type: 'Paediatric hospital', score: '98%', distance: '3.1 km', wait: '~30 min', cost: '₵ low', status: 'Open now', note: 'Paediatricians and child vaccination.' },
+    { name: 'Adabraka Polyclinic', type: 'Polyclinic · Child welfare clinic', score: '80%', distance: '1.3 km', wait: '~15 min', cost: '₵ low', status: 'Open now', note: 'Good for mild fevers and check-ups.' },
+  ],
+  Dental: [
+    { name: 'Accra Dental Centre', type: 'Dental clinic', score: '95%', distance: '2.2 km', wait: 'Appointment', cost: '₵₵ medium', status: 'Open now', note: 'Extractions and fillings today.' },
+  ],
+  Laboratory: [
+    { name: 'MedLab Diagnostics — Kaneshie', type: 'Laboratory', score: '94%', distance: '1.9 km', wait: '~10 min', cost: '₵ low', status: 'Open now', note: 'Malaria, typhoid and blood panels.' },
+  ],
+  Pharmacy: [
+    { name: 'Kingsway Pharmacy', type: 'Licensed pharmacy', score: '91%', distance: '0.6 km', wait: 'Walk in', cost: '₵ low', status: 'Open now', note: 'Stocks Coartem and inhalers.' },
+  ],
+};
+const REPLIES = {
+  'Is my fever dangerous?': 'A fever of 38.5°C for two days needs a malaria test, but it is not an emergency yet. Go urgently if you get confusion, a stiff neck, or trouble breathing.',
+  'Prepare questions for my doctor': 'Ask: 1) What exactly is causing my symptoms? 2) Does this interact with my asthma inhaler? 3) What warning signs mean I should come back? I can save these to your record.',
+  'Explain my lab result': 'Your result shows a positive malaria smear with a low parasite count — treatable at a polyclinic. Nothing in it points to a hospital admission.',
+};
+
+const SETUP_STEPS = [
+  { key: 'identity', fields: 'identity', cta: 'Continue', bubble: "Let's start with the basics — 2 minutes, and my advice gets far sharper.",
+    title: 'Who you are', sub: 'Your age and where you live change which illnesses are likely.',
+    groups: [{ key: 'sex', label: 'Sex at birth', options: ['Female', 'Male', 'Prefer not to say'] }] },
+  { key: 'body', fields: 'body', cta: 'Continue', bubble: 'Height and weight let me judge doses and fever thresholds.',
+    title: 'Your body', sub: 'I use this to spot doses that are wrong for your build.',
+    groups: [{ key: 'blood', label: 'Blood group', options: ['A+', 'A−', 'B+', 'B−', 'O+', 'O−', 'AB+', 'AB−', 'Not sure'] }] },
+  { key: 'conditions', cta: 'Continue', bubble: 'This is the part that changes my advice the most.',
+    title: 'Ongoing conditions', sub: 'Anything a health worker has told you that you have.',
+    groups: [
+      { key: 'conditions', label: 'Conditions', multi: true, options: ['Asthma', 'Diabetes', 'High blood pressure', 'Sickle cell', 'Epilepsy', 'HIV', 'Ulcer', 'Kidney disease', 'None'] },
+      { key: 'pregnancy', label: 'Pregnant or breastfeeding?', options: ['No', 'Pregnant', 'Breastfeeding', 'Not sure'] },
+    ] },
+  { key: 'allergies', fields: 'meds', cta: 'Continue', bubble: 'I will never suggest something you react to.',
+    title: 'Allergies & medicines', sub: 'Reactions and current medicines, so nothing clashes.',
+    groups: [{ key: 'allergies', label: 'Allergies', multi: true, options: ['Penicillin', 'Sulfa drugs', 'Aspirin', 'Peanuts', 'Latex', 'Dust', 'None known'] }] },
+  { key: 'lifestyle', cta: 'Continue', bubble: 'No judgement — habits shape risk as much as history does.',
+    title: 'Daily life', sub: 'Four quick taps. This tunes how urgent I make things.',
+    groups: [
+      { key: 'smoking', label: 'Smoking', options: ['Never', 'Occasionally', 'Daily', 'Quit'] },
+      { key: 'alcohol', label: 'Alcohol', options: ['Never', 'Sometimes', 'Weekly', 'Daily'] },
+      { key: 'activity', label: 'Activity', options: ['Mostly sitting', 'Light', 'Active', 'Very active'] },
+      { key: 'sleep', label: 'Sleep', options: ['Under 5h', '5–6h', '7–8h', 'Over 8h'] },
+    ] },
+  { key: 'family', cta: 'Continue', bubble: 'Blood relatives only — parents, siblings, children.',
+    title: 'Family history', sub: 'Conditions that run in your family bring screening forward.',
+    groups: [{ key: 'family', label: 'In my close family', multi: true, options: ['Diabetes', 'High blood pressure', 'Heart disease', 'Stroke', 'Cancer', 'Sickle cell', 'Asthma', 'None'] }] },
+  { key: 'access', fields: 'consent', cta: 'Build my profile', bubble: 'You stay in control of everything I keep.',
+    title: 'Language & consent', sub: 'How I speak to you, and what I am allowed to store.',
+    groups: [{ key: 'lang', label: 'Preferred language', options: LANGS }] },
+];
+const clean = (a) => a.filter((x) => x.indexOf('None') !== 0);
+
+class Component extends DCLogic {
+  state = {
+    screen: 'welcome',
+    lang: 'English',
+    setupStep: 0,
+    profile: {
+      name: 'Ama Mensah', age: '28', city: 'Accra', sex: 'Female',
+      height: 164, weight: 62, blood: 'O+',
+      conditions: ['Asthma'], pregnancy: 'No',
+      allergies: ['Penicillin'], meds: 'Salbutamol inhaler, as needed',
+      smoking: 'Never', alcohol: 'Sometimes', activity: 'Light', sleep: '5–6h',
+      family: ['Diabetes', 'High blood pressure'],
+      consentStore: true, consentShare: false,
+    },
+    symptoms: ['Fever', 'Chills'],
+    answers: { onset: '2–3 days ago', severity: 'Uncomfortable', history: 'Asthma' },
+    care: 'General',
+    messages: [
+      { ai: true, text: 'Hello Ama — I am Dr. Peacock. Ask me about symptoms, medicines or what a doctor told you.' },
+      { attach: true },
+      { me: true, text: 'My doctor prescribed this. What is it for?' },
+      { ai: true, text: 'That is Coartem — an anti-malarial. Take it twice daily for 3 days with food, and finish the full course even once you feel better.' },
+    ],
+    typing: false,
+  };
+
+  go = (screen) => this.setState({ screen });
+
+  setP = (key, value) => this.setState((s) => ({ profile: Object.assign({}, s.profile, { [key]: value }) }));
+
+  pickOne = (key, value) => {
+    if (key === 'lang') this.setState({ lang: value });
+    this.setP(key, value);
+  };
+
+  toggleMulti = (key, value) => this.setState((s) => {
+    const cur = s.profile[key] || [];
+    let next;
+    if (value.indexOf('None') === 0) next = cur.indexOf(value) >= 0 ? [] : [value];
+    else next = (cur.indexOf(value) >= 0 ? cur.filter((x) => x !== value) : cur.concat([value])).filter((x) => x.indexOf('None') !== 0);
+    return { profile: Object.assign({}, s.profile, { [key]: next }) };
+  });
+
+  bump = (key, delta, min, max) => this.setState((s) => ({
+    profile: Object.assign({}, s.profile, { [key]: Math.min(max, Math.max(min, s.profile[key] + delta)) }),
+  }));
+
+  setupNext = () => this.setState((s) => (s.setupStep > SETUP_STEPS.length - 1
+    ? { screen: 'home' }
+    : { setupStep: s.setupStep + 1 }));
+
+  setupBack = () => this.setState((s) => (s.setupStep === 0
+    ? { screen: 'welcome' }
+    : { setupStep: s.setupStep - 1 }));
+
+  toggle = (name) => this.setState((s) => ({
+    symptoms: s.symptoms.includes(name) ? s.symptoms.filter((x) => x !== name) : s.symptoms.concat([name]),
+  }));
+
+  analyze = () => {
+    this.setState({ screen: 'analyzing' });
+    clearTimeout(this._t);
+    this._t = setTimeout(() => {
+      const s = this.state;
+      const danger = s.symptoms.includes('Chest pain') || s.symptoms.includes('Difficulty breathing');
+      this.setState({ screen: danger ? 'emergency' : 'result' });
+    }, 2300);
+  };
+
+  send = (text) => {
+    this.setState((s) => ({ messages: s.messages.concat([{ me: true, text }]), typing: true, screen: 'chat' }));
+    clearTimeout(this._c);
+    this._c = setTimeout(() => {
+      this.setState((s) => ({
+        typing: false,
+        messages: s.messages.concat([{ ai: true, text: REPLIES[text] || 'Let me look into that for you.' }]),
+      }));
+    }, 1200);
+  };
+
+  componentWillUnmount() { clearTimeout(this._t); clearTimeout(this._c); }
+
+  renderVals() {
+    const s = this.state;
+    const p = s.profile;
+    const name = p.name || (this.props.patientName ?? 'Ama Mensah');
+    const st = s.setupStep;
+    const def = SETUP_STEPS[st] || null;
+    const isSum = st > SETUP_STEPS.length - 1;
+    const bmiN = p.weight / Math.pow(p.height / 100, 2);
+    const bmi = bmiN.toFixed(1);
+    const bmiBand = bmiN < 18.5 ? 'Below healthy range' : bmiN < 25 ? 'Healthy range' : bmiN < 30 ? 'Above healthy range' : 'High — worth a check';
+    const cond = clean(p.conditions), alg = clean(p.allergies), fam = clean(p.family);
+    const tailored = [];
+    tailored.push({ title: 'Doses sized to you', desc: p.height + ' cm · ' + p.weight + ' kg · BMI ' + bmi + ' (' + bmiBand.toLowerCase() + '). I flag doses that do not fit your build.' });
+    if (cond.length) tailored.push({ title: 'Conditions read into every check', desc: cond.join(', ') + ' — I weigh these on every symptom check and remind you to tell the clinic.' });
+    if (alg.length) tailored.push({ title: 'Never suggested to you', desc: alg.join(', ') + ' is filtered out of every medicine I mention.' });
+    if (p.pregnancy !== 'No' && p.pregnancy !== 'Not sure') tailored.push({ title: 'Pregnancy-safe only', desc: 'Every suggestion is screened for ' + p.pregnancy.toLowerCase() + ' safety, and maternity care is ranked first.' });
+    if (fam.length) tailored.push({ title: 'Screening brought forward', desc: 'Family history of ' + fam.join(', ') + ' — I will nudge you for checks earlier than average.' });
+    tailored.push({ title: 'Local risk added', desc: 'Malaria is in season around ' + (p.city || 'Accra') + '. Fever gets a faster route to testing for you.' });
+    if (p.sleep === 'Under 5h' || p.sleep === '5–6h') tailored.push({ title: 'Short sleep noted', desc: 'Headaches and fatigue get read against ' + p.sleep.toLowerCase() + ' of sleep before I call them a symptom.' });
+    const tone = this.props.tone ?? 'warm';
+    const screen = s.screen;
+    const tabScreens = ['home', 'care', 'chat', 'profile'];
+    return {
+      patientName: name,
+      firstName: name.split(' ')[0],
+      initials: name.split(' ').map((w) => w[0]).join('').slice(0, 2).toUpperCase(),
+      language: s.lang,
+      greeting: 'Good morning',
+      heroLine: tone === 'clinical'
+        ? 'Describe your symptoms for a triage recommendation.'
+        : 'How are you feeling today? Tell me in your own words.',
+      isWelcome: screen === 'welcome',
+      isSetup: screen === 'setup',
+      setupIsForm: !isSum,
+      setupIsSummary: isSum,
+      setupStepLabel: isSum ? 'Profile ready' : 'Step ' + (st + 1) + ' of ' + SETUP_STEPS.length,
+      setupPct: isSum ? '100%' : Math.round(((st + 1) / (SETUP_STEPS.length + 1)) * 100) + '%',
+      setupTitle: def ? def.title : '',
+      setupSub: def ? def.sub : '',
+      setupBubble: def ? def.bubble : '',
+      setupCta: isSum ? 'Start using Dr. Peacock' : def.cta,
+      setupSkip: isSum ? 'Review later' : 'Skip for now',
+      setupHasIdentity: !!def && def.fields === 'identity',
+      setupHasBody: !!def && def.fields === 'body',
+      setupHasMeds: !!def && def.fields === 'meds',
+      setupHasConsent: !!def && def.fields === 'consent',
+      setupGroups: def ? def.groups.map((g) => ({
+        label: g.label,
+        options: g.options.map((o) => {
+          const cur = g.key === 'lang' ? s.lang : p[g.key];
+          const on = g.multi ? (cur || []).indexOf(o) >= 0 : cur === o;
+          return { name: o, on: on, off: !on, pick: () => (g.multi ? this.toggleMulti(g.key, o) : this.pickOne(g.key, o)) };
+        }),
+      })) : [],
+      setupNext: this.setupNext,
+      setupBack: this.setupBack,
+      pName: p.name, pAge: p.age, pCity: p.city, pMeds: p.meds,
+      pHeight: p.height, pWeight: p.weight, bmi: bmi, bmiBand: bmiBand,
+      onName: (e) => this.setP('name', e.target.value),
+      onAge: (e) => this.setP('age', e.target.value),
+      onCity: (e) => this.setP('city', e.target.value),
+      onMeds: (e) => this.setP('meds', e.target.value),
+      heightUp: () => this.bump('height', 1, 120, 210),
+      heightDown: () => this.bump('height', -1, 120, 210),
+      weightUp: () => this.bump('weight', 1, 30, 200),
+      weightDown: () => this.bump('weight', -1, 30, 200),
+      consentStore: p.consentStore, consentStoreOff: !p.consentStore,
+      consentShare: p.consentShare, consentShareOff: !p.consentShare,
+      toggleStore: () => this.setP('consentStore', !p.consentStore),
+      toggleShare: () => this.setP('consentShare', !p.consentShare),
+      tailoredItems: tailored,
+      profileLine: [p.age, p.sex, p.city, s.lang].filter(Boolean).join(' · '),
+      isHome: screen === 'home',
+      isSymptoms: screen === 'symptoms',
+      isFollowup: screen === 'followup',
+      isAnalyzing: screen === 'analyzing',
+      isResult: screen === 'result',
+      isEmergency: screen === 'emergency',
+      isCare: screen === 'care',
+      isChat: screen === 'chat',
+      isProfile: screen === 'profile',
+      isCelebrate: screen === 'celebrate',
+      showTabs: tabScreens.indexOf(screen) >= 0,
+      tabHome: screen === 'home', tabHomeOff: screen !== 'home',
+      tabCare: screen === 'care', tabCareOff: screen !== 'care',
+      tabChat: screen === 'chat', tabChatOff: screen !== 'chat',
+      tabProfile: screen === 'profile', tabProfileOff: screen !== 'profile',
+      goWelcome: () => this.go('welcome'),
+      goSetup: () => this.go('setup'),
+      goHome: () => this.go('home'),
+      goSymptoms: () => this.go('symptoms'),
+      goFollowup: () => this.go('followup'),
+      goCare: () => this.go('care'),
+      goChat: () => this.go('chat'),
+      goProfile: () => this.go('profile'),
+      goEmergency: () => this.go('emergency'),
+      goCelebrate: () => this.go('celebrate'),
+      analyze: this.analyze,
+      symptomText: s.symptoms.length
+        ? s.symptoms.join(', ') + (s.answers.onset ? ' · started ' + s.answers.onset.toLowerCase() : '')
+        : 'Describe how you feel, in your own words…',
+      symptomOptions: SYMPTOMS.map((n) => ({
+        name: n, on: s.symptoms.includes(n), off: !s.symptoms.includes(n), toggle: () => this.toggle(n),
+      })),
+      langOptions: LANGS.map((n) => ({
+        name: n, on: s.lang === n, off: s.lang !== n, pick: () => this.setState({ lang: n }),
+      })),
+      questions: QUESTIONS.map((q) => ({
+        label: q.label,
+        options: q.options.map((o) => ({
+          name: o, on: s.answers[q.key] === o, off: s.answers[q.key] !== o,
+          pick: () => this.setState((st) => ({ answers: Object.assign({}, st.answers, { [q.key]: o }) })),
+        })),
+      })),
+      careTypes: CARE.map((n) => ({
+        name: n, on: s.care === n, off: s.care !== n, pick: () => this.setState({ care: n }),
+      })),
+      careHeading: s.care === 'General' ? 'General consultation' : s.care,
+      facilities: FACILITIES[s.care] || FACILITIES.General,
+      resultFacilities: FACILITIES.General.slice(0, 2),
+      recordSections: [
+        { label: 'Allergies', value: alg.length ? alg.join(', ') : 'None known' },
+        { label: 'Existing conditions', value: cond.length ? cond.join(', ') : 'None recorded' },
+        { label: 'Medications', value: p.meds || 'None recorded' },
+        { label: 'Body & vitals', value: p.height + ' cm · ' + p.weight + ' kg · BMI ' + bmi + ' · blood ' + p.blood },
+        { label: 'Lifestyle', value: [p.smoking + ' smoking', p.alcohol + ' alcohol', p.activity, p.sleep + ' sleep'].join(' · ') },
+        { label: 'Family history', value: fam.length ? fam.join(', ') : 'None reported' },
+        { label: 'Recent visits', value: 'Ridge Hospital · 12 May 2026' },
+        { label: 'Languages', value: s.lang + ' · Twi' },
+      ],
+      messages: s.messages,
+      typing: s.typing,
+      prompts: ['Is my fever dangerous?', 'Prepare questions for my doctor', 'Explain my lab result'].map((n) => ({
+        name: n, send: () => this.send(n),
+      })),
+    };
+  }
+}
+
+</script>
+</body>
+</html>

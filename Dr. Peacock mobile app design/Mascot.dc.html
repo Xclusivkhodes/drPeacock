@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<img src="{{ src }}" alt="Dr. Peacock" style="position:absolute;inset:0;display:block;width:100%;height:100%;object-fit:contain;user-select:none">
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:220,&quot;height&quot;:420},&quot;pose&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;confident&quot;,&quot;explaining&quot;,&quot;checking&quot;,&quot;hello&quot;,&quot;shield&quot;,&quot;happy&quot;,&quot;wink&quot;,&quot;thinking&quot;,&quot;surprised&quot;,&quot;caring&quot;,&quot;reminder&quot;,&quot;tip&quot;,&quot;medication&quot;,&quot;celebrating&quot;],&quot;default&quot;:&quot;confident&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const POSES = ['confident','explaining','checking','hello','shield','happy','wink','thinking','surprised','caring','reminder','tip','medication','celebrating'];
+
+class Component extends DCLogic {
+  renderVals() {
+    const pose = this.props.pose ?? 'confident';
+    const name = POSES.indexOf(pose) >= 0 ? pose : 'confident';
+    return { src: 'assets/mascot-' + name + '.png' };
+  }
+}
+
+</script>
+</body>
+</html>
