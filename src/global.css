@@ -1,0 +1,33 @@
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/preflight.css" layer(base);
+@import "tailwindcss/utilities.css";
+@import "nativewind/theme";
+
+@theme {
+  --color-primary: #1565C0;
+  --color-primary-dark: #0D47A1;
+  --color-accent-teal: #26A69A;
+
+  --color-bg-page: #E8EEF6;
+  --color-bg-card: #FFFFFF;
+  --color-bg-card-alt: #F5F7FA;
+  --color-chip-inactive: #F0F3F8;
+
+  --color-success: #43A047;
+  --color-success-dark: #2E7D32;
+  --color-danger: #E53935;
+  --color-danger-dark: #C62828;
+  --color-warning: #FFB300;
+  --color-warning-dark: #96650B;
+  --color-info-bg: #E0F2F1;
+  --color-info-text: #00695C;
+
+  --radius-card: 20px;
+  --radius-chip: 14px;
+  --radius-pill: 99px;
+
+  --font-poppins: "Poppins_400Regular";
+  --font-poppins-medium: "Poppins_500Medium";
+  --font-poppins-semibold: "Poppins_600SemiBold";
+  --font-poppins-bold: "Poppins_700Bold";
+}
