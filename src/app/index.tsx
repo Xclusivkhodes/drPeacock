@@ -1,5 +1,8 @@
 import { Redirect } from "expo-router";
 
+import { useProfileStore } from "@/store/useProfileStore";
+
 export default function RootIndex() {
-  return <Redirect href="/(auth)/welcome" />;
+  const hasCompletedOnboarding = useProfileStore((state) => state.hasCompletedOnboarding);
+  return <Redirect href={hasCompletedOnboarding ? "/(tabs)" : "/(auth)/welcome"} />;
 }

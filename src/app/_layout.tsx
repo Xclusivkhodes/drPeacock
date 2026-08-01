@@ -11,14 +11,16 @@ import {
 } from "@expo-google-fonts/poppins";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+
+import { useProfileStore } from "@/store/useProfileStore";
 
 SplashScreen.preventAutoHideAsync();
 
 const publishableKey = process.env.EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY;
 if (!publishableKey) {
   console.warn(
-    "Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY — Clerk auth will not function until it is set in .env."
+    "Missing EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY — Clerk auth will not function until it is set in .env.",
   );
 }
 
@@ -29,19 +31,34 @@ export default function RootLayout() {
     Poppins_600SemiBold,
     Poppins_700Bold,
   });
+  const [profileHydrated, setProfileHydrated] = useState(useProfileStore.persist.hasHydrated());
 
   useEffect(() => {
-    if (fontsLoaded) {
+    if (profileHydrated) return;
+    if (useProfileStore.persist.hasHydrated()) {
+      setProfileHydrated(true);
+      return;
+    }
+    return useProfileStore.persist.onFinishHydration(() => setProfileHydrated(true));
+  }, [profileHydrated]);
+
+  const ready = fontsLoaded && profileHydrated;
+
+  useEffect(() => {
+    if (ready) {
       SplashScreen.hideAsync();
     }
-  }, [fontsLoaded]);
+  }, [ready]);
 
-  if (!fontsLoaded) {
+  if (!ready) {
     return null;
   }
 
   return (
-    <ClerkProvider publishableKey={publishableKey ?? ""} tokenCache={tokenCache}>
+    <ClerkProvider
+      publishableKey={publishableKey ?? ""}
+      tokenCache={tokenCache}
+    >
       <Stack screenOptions={{ headerShown: false }}>
         <Stack.Screen name="(auth)" />
         <Stack.Screen name="(onboarding)" />
@@ -52,6 +69,7 @@ export default function RootLayout() {
           options={{ presentation: "fullScreenModal", gestureEnabled: false }}
         />
         <Stack.Screen name="celebrate" options={{ presentation: "modal" }} />
+        <Stack.Screen name="directions" options={{ presentation: "modal" }} />
       </Stack>
     </ClerkProvider>
   );

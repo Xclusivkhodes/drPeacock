@@ -7,16 +7,8 @@ import { useChatStore } from "@/store/useChatStore";
 
 export default function FollowupScreen() {
   const symptomDraft = useChatStore((state) => state.symptomDraft);
-  const setSymptomDraft = useChatStore((state) => state.setSymptomDraft);
+  const answerFollowUp = useChatStore((state) => state.answerFollowUp);
   const answers = symptomDraft?.answers ?? {};
-
-  const selectAnswer = (key: string, value: string) => {
-    setSymptomDraft({
-      symptomText: symptomDraft?.symptomText ?? "",
-      selectedSymptoms: symptomDraft?.selectedSymptoms ?? [],
-      answers: { ...answers, [key]: value },
-    });
-  };
 
   return (
     <View className="flex-1 gap-4 bg-bg-page px-6 pt-16">
@@ -40,7 +32,7 @@ export default function FollowupScreen() {
                 return (
                   <Pressable
                     key={option}
-                    onPress={() => selectAnswer(question.key, option)}
+                    onPress={() => answerFollowUp(question.key, option)}
                     className={`rounded-chip px-3 py-2 ${isSelected ? "bg-primary" : "bg-chip-inactive"}`}
                   >
                     <Text className={`font-poppins-medium text-sm ${isSelected ? "text-white" : "text-primary-dark"}`}>

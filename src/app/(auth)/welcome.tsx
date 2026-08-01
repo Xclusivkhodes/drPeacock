@@ -10,7 +10,12 @@ export default function WelcomeScreen() {
     <LinearGradient
       colors={["#E3EDFB", "#F5F7FA", "#FFFFFF"]}
       locations={[0, 0.62, 1]}
-      style={{ flex: 1, paddingHorizontal: 28, paddingBottom: 30, paddingTop: 64 }}
+      style={{
+        flex: 1,
+        paddingHorizontal: 28,
+        paddingBottom: 30,
+        paddingTop: 64,
+      }}
     >
       <View className="flex-row items-center gap-2">
         <MaterialCommunityIcons name="heart-pulse" size={26} color="#1565C0" />
@@ -28,8 +33,8 @@ export default function WelcomeScreen() {
       </Text>
 
       <Text className="mt-3 max-w-[308px] font-poppins text-[15.5px] leading-[24px] text-muted">
-        I&apos;m Dr. Peacock. Tell me how you feel and I&apos;ll guide you to the right care — in your
-        own language.
+        I&apos;m Dr. Peacock. Tell me how you feel and I&apos;ll guide you to
+        the right care — in your own language.
       </Text>
 
       <View className="flex-1" />
