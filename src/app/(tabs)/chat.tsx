@@ -25,7 +25,7 @@ import {
 import { ChatBubble, formatSeconds } from "@/components/ChatBubble";
 import { Mascot } from "@/components/Mascot";
 import type { ChatMessage } from "@/data/types";
-import { generateChatReply } from "@/lib/gemma";
+import { generateChatReply, type ChatImageAttachment } from "@/lib/gemma";
 import { useChatStore } from "@/store/useChatStore";
 import { useProfileStore } from "@/store/useProfileStore";
 import { useSettingsStore } from "@/store/useSettingsStore";
@@ -162,6 +162,7 @@ export default function ChatScreen() {
 
   const [inputText, setInputText] = useState("");
   const [pendingImageUri, setPendingImageUri] = useState<string | undefined>();
+  const [pendingImage, setPendingImage] = useState<ChatImageAttachment | undefined>();
   const [isThinking, setIsThinking] = useState(false);
   const scrollRef = useRef<ScrollView>(null);
   const seeded = useRef(false);
@@ -183,7 +184,7 @@ export default function ChatScreen() {
     });
   }, [messages.length, profile, addMessage]);
 
-  const submitMessage = async (userMessage: ChatMessage) => {
+  const submitMessage = async (userMessage: ChatMessage, image?: ChatImageAttachment) => {
     // 1. Calculate explicit history array immediately to prevent state lag
     const updatedHistory = [...messages, userMessage];
 
@@ -197,6 +198,7 @@ export default function ChatScreen() {
         updatedHistory,
         profile,
         language,
+        image,
       );
 
       addMessage({
@@ -228,9 +230,11 @@ export default function ChatScreen() {
       attachmentUri: pendingImageUri,
       createdAt: Date.now(),
     };
+    const image = pendingImage;
     setInputText("");
     setPendingImageUri(undefined);
-    await submitMessage(userMessage);
+    setPendingImage(undefined);
+    await submitMessage(userMessage, image);
   };
 
   const finalizeRecording = (shouldSend: boolean) => {
@@ -293,9 +297,12 @@ export default function ChatScreen() {
     const result = await ImagePicker.launchCameraAsync({
       quality: 0.6,
       allowsEditing: false,
+      base64: true,
     });
-    if (!result.canceled && result.assets?.[0]?.uri) {
-      setPendingImageUri(result.assets[0].uri);
+    const asset = result.canceled ? undefined : result.assets?.[0];
+    if (asset?.uri) {
+      setPendingImageUri(asset.uri);
+      if (asset.base64) setPendingImage({ data: asset.base64, mimeType: asset.mimeType ?? "image/jpeg" });
     }
   };
 
@@ -306,9 +313,12 @@ export default function ChatScreen() {
       quality: 0.6,
       allowsEditing: false,
       mediaTypes: ["images"],
+      base64: true,
     });
-    if (!result.canceled && result.assets?.[0]?.uri) {
-      setPendingImageUri(result.assets[0].uri);
+    const asset = result.canceled ? undefined : result.assets?.[0];
+    if (asset?.uri) {
+      setPendingImageUri(asset.uri);
+      if (asset.base64) setPendingImage({ data: asset.base64, mimeType: asset.mimeType ?? "image/jpeg" });
     }
   };
 
@@ -398,7 +408,10 @@ export default function ChatScreen() {
                 Ready to send
               </Text>
               <Pressable
-                onPress={() => setPendingImageUri(undefined)}
+                onPress={() => {
+                  setPendingImageUri(undefined);
+                  setPendingImage(undefined);
+                }}
                 className="mr-1 h-6 w-6 items-center justify-center rounded-full bg-chip-inactive"
               >
                 <MaterialCommunityIcons

@@ -4,11 +4,11 @@ import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 import { stripThinking } from "@/lib/thinking";
 
 /**
- * Client-side wrappers around Dr. Peacock's cloud AI (Gemma-4-E2B-it served
- * through the Google AI Studio API). All inference happens strictly
- * server-side, via this app's own Expo Router API routes
- * (app/api/chat+api.ts, app/api/baseline+api.ts) — process.env.AI_STUDIO_API_KEY
- * never reaches this file or the client bundle.
+ * Client-side wrappers around Dr. Peacock's cloud AI (gemma-4-31b-it served
+ * through the NVIDIA API). All inference happens strictly server-side, via
+ * this app's own Expo Router API routes (app/api/chat+api.ts,
+ * app/api/baseline+api.ts) — process.env.NVIDIA_API_KEY never reaches this
+ * file or the client bundle.
  */
 const MAX_CHAT_HISTORY_TURNS = 12;
 
@@ -58,29 +58,53 @@ export interface ChatReplyResult {
   text: string;
 }
 
+/** A photo attached to the patient's current turn, ready to send to
+ * app/api/chat+api.ts as real image data (gemma-4-31b-it is vision-capable).
+ * NVIDIA's API has no equivalent content type for audio, so voice messages
+ * are still described as text only — see the fallback below. */
+export interface ChatImageAttachment {
+  /** Base64-encoded bytes, no `data:` prefix. */
+  data: string;
+  mimeType: string;
+}
+
 /**
  * Generates Dr. Peacock's next chat reply from the full message history (the
  * multi-turn chat store is the single source of truth — see
  * store/useChatStore.ts). The last entry in `history` is the patient's
  * current turn. Forwards the trimmed history to app/api/chat+api.ts, which
- * securely calls the Google AI Studio API server-side. Only the most recent
- * message's photo/voice attachment (if any) is described as text, since media
- * isn't proxied to the cloud API.
+ * securely calls the NVIDIA API server-side. When `currentImage` is passed
+ * (the patient just attached a photo), it's sent alongside the last message
+ * as real image data; older photo attachments and any voice message are
+ * described as text only.
  */
-export async function generateChatReply(history: ChatMessage[], profile: UserProfile | null, language: string): Promise<ChatReplyResult> {
-  const recent: OutgoingChatMessage[] = history.slice(-MAX_CHAT_HISTORY_TURNS).map((message) => ({
-    role: message.from === "ai" ? "assistant" : "user",
-    content:
-      message.text ||
-      (message.audioUri ? "[Voice message — not available to the assistant]" : "") ||
-      (message.attachmentUri ? "[Photo — not available to the assistant]" : ""),
-  }));
+export async function generateChatReply(
+  history: ChatMessage[],
+  profile: UserProfile | null,
+  language: string,
+  currentImage?: ChatImageAttachment
+): Promise<ChatReplyResult> {
+  const recentHistory = history.slice(-MAX_CHAT_HISTORY_TURNS);
+  const recent: OutgoingChatMessage[] = recentHistory.map((message, index) => {
+    const role = message.from === "ai" ? "assistant" : "user";
+    const isLast = index === recentHistory.length - 1;
+    if (isLast && currentImage) {
+      return { role, content: message.text || "What can you tell me about this photo?" };
+    }
+    return {
+      role,
+      content:
+        message.text ||
+        (message.audioUri ? "[Voice message — not available to the assistant]" : "") ||
+        (message.attachmentUri ? "[Photo — not available to the assistant]" : ""),
+    };
+  });
 
   try {
     const response = await fetch(`${getApiBaseUrl()}/api/chat`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ messages: recent, profile, language }),
+      body: JSON.stringify({ messages: recent, profile, language, image: currentImage }),
     });
     if (!response.ok) {
       throw new Error(`Chat request failed with status ${response.status}`);
