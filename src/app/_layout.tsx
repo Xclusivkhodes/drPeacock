@@ -11,9 +11,17 @@ import {
 } from "@expo-google-fonts/poppins";
 import { Stack } from "expo-router";
 import * as SplashScreen from "expo-splash-screen";
-import { useEffect, useState } from "react";
+import { useEffect, useSyncExternalStore } from "react";
 
 import { useProfileStore } from "@/store/useProfileStore";
+
+function subscribeToProfileHydration(onStoreChange: () => void) {
+  return useProfileStore.persist.onFinishHydration(onStoreChange);
+}
+
+function getProfileHydratedSnapshot() {
+  return useProfileStore.persist.hasHydrated();
+}
 
 SplashScreen.preventAutoHideAsync();
 
@@ -25,24 +33,20 @@ if (!publishableKey) {
 }
 
 export default function RootLayout() {
-  const [fontsLoaded] = useFonts({
+  const [fontsLoaded, fontError] = useFonts({
     Poppins_400Regular,
     Poppins_500Medium,
     Poppins_600SemiBold,
     Poppins_700Bold,
   });
-  const [profileHydrated, setProfileHydrated] = useState(useProfileStore.persist.hasHydrated());
+  const profileHydrated = useSyncExternalStore(
+    subscribeToProfileHydration,
+    getProfileHydratedSnapshot,
+    () => false,
+  );
 
-  useEffect(() => {
-    if (profileHydrated) return;
-    if (useProfileStore.persist.hasHydrated()) {
-      setProfileHydrated(true);
-      return;
-    }
-    return useProfileStore.persist.onFinishHydration(() => setProfileHydrated(true));
-  }, [profileHydrated]);
-
-  const ready = fontsLoaded && profileHydrated;
+  // A font load failure should not pin the splash screen forever.
+  const ready = (fontsLoaded || fontError != null) && profileHydrated;
 
   useEffect(() => {
     if (ready) {

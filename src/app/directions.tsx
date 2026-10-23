@@ -1,9 +1,10 @@
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { router, useLocalSearchParams } from "expo-router";
 import { useEffect, useRef, useState } from "react";
-import { ActivityIndicator, Linking, Pressable, StyleSheet, Text, View } from "react-native";
-import MapView, { Marker, Polyline, PROVIDER_GOOGLE } from "react-native-maps";
+import { ActivityIndicator, Linking, Pressable, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+
+import { FacilityMap, type FacilityMapHandle } from "@/components/FacilityMap";
 
 import { fetchDirections, type RouteResult } from "@/lib/directions";
 import { getCurrentCoords, type Coordinates } from "@/lib/places";
@@ -13,7 +14,7 @@ const cardShadowUp = { shadowColor: "#0D47A1", shadowOffset: { width: 0, height:
 
 export default function DirectionsScreen() {
   const insets = useSafeAreaInsets();
-  const mapRef = useRef<MapView>(null);
+  const mapRef = useRef<FacilityMapHandle>(null);
   const params = useLocalSearchParams<{
     name: string;
     type: string;
@@ -77,16 +78,13 @@ export default function DirectionsScreen() {
 
   return (
     <View style={{ flex: 1 }}>
-      <MapView
+      <FacilityMap
         ref={mapRef}
-        provider={PROVIDER_GOOGLE}
-        style={StyleSheet.absoluteFill}
-        initialRegion={{ latitude: destination.latitude, longitude: destination.longitude, latitudeDelta: 0.05, longitudeDelta: 0.05 }}
-      >
-        {origin ? <Marker coordinate={origin} title="You" pinColor="#1565C0" /> : null}
-        <Marker coordinate={destination} title={params.name} />
-        {route ? <Polyline coordinates={route.coordinates} strokeColor="#1565C0" strokeWidth={4} /> : null}
-      </MapView>
+        destination={destination}
+        destinationTitle={params.name}
+        origin={origin}
+        route={route?.coordinates ?? null}
+      />
 
       <Pressable
         onPress={() => router.back()}

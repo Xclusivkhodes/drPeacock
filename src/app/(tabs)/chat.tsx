@@ -57,8 +57,18 @@ function makeId(): string {
   return `${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
+function createChatMessage(
+  message: Omit<ChatMessage, "id" | "createdAt">,
+): ChatMessage {
+  return {
+    ...message,
+    id: makeId(),
+    createdAt: Date.now(),
+  };
+}
+
 function TypingIndicator() {
-  const dots = useRef([0, 1, 2].map(() => new Animated.Value(0.3))).current;
+  const [dots] = useState(() => [0, 1, 2].map(() => new Animated.Value(0.3)));
 
   useEffect(() => {
     const loops = dots.map((value, index) =>
@@ -109,7 +119,7 @@ function TypingIndicator() {
 }
 
 function Waveform() {
-  const bars = useRef([0, 1, 2, 3, 4].map(() => new Animated.Value(6))).current;
+  const [bars] = useState(() => [0, 1, 2, 3, 4].map(() => new Animated.Value(6)));
 
   useEffect(() => {
     const loops = bars.map((value, index) =>
@@ -176,12 +186,12 @@ export default function ChatScreen() {
     if (seeded.current || messages.length > 0) return;
     seeded.current = true;
     const firstName = profile?.name?.trim().split(" ")[0] || "there";
-    addMessage({
-      id: makeId(),
-      from: "ai",
-      text: `Hello ${firstName} — I am Dr. Peacock. Ask me about symptoms, medicines or what a doctor told you.`,
-      createdAt: Date.now(),
-    });
+    addMessage(
+      createChatMessage({
+        from: "ai",
+        text: `Hello ${firstName} — I am Dr. Peacock. Ask me about symptoms, medicines or what a doctor told you.`,
+      }),
+    );
   }, [messages.length, profile, addMessage]);
 
   const submitMessage = async (userMessage: ChatMessage, image?: ChatImageAttachment) => {
@@ -201,12 +211,12 @@ export default function ChatScreen() {
         image,
       );
 
-      addMessage({
-        id: makeId(),
-        from: "ai",
-        text: reply,
-        createdAt: Date.now(),
-      });
+      addMessage(
+        createChatMessage({
+          from: "ai",
+          text: reply,
+        }),
+      );
 
       if (autoSpeakReplies) {
         Speech.stop();
@@ -223,13 +233,11 @@ export default function ChatScreen() {
     const text = (rawText ?? inputText).trim();
     if (!text && !pendingImageUri) return;
 
-    const userMessage: ChatMessage = {
-      id: makeId(),
+    const userMessage = createChatMessage({
       from: "user",
       text: text || undefined,
       attachmentUri: pendingImageUri,
-      createdAt: Date.now(),
-    };
+    });
     const image = pendingImage;
     setInputText("");
     setPendingImageUri(undefined);
@@ -241,13 +249,13 @@ export default function ChatScreen() {
     if (recordingFinalizedRef.current) return;
     recordingFinalizedRef.current = true;
     if (shouldSend && recorder.uri) {
-      void submitMessage({
-        id: makeId(),
-        from: "user",
-        audioUri: recorder.uri,
-        audioDurationMs: recorder.currentTime * 1000,
-        createdAt: Date.now(),
-      });
+      void submitMessage(
+        createChatMessage({
+          from: "user",
+          audioUri: recorder.uri,
+          audioDurationMs: recorder.currentTime * 1000,
+        }),
+      );
     }
   };
 
@@ -509,7 +517,7 @@ export default function ChatScreen() {
           )}
 
           <Text className="mt-2.5 text-center font-poppins text-[11px] text-[rgba(45,55,72,0.4)]">
-            Follow your doctor's instructions over anything said here.
+            {"Follow your doctor's instructions over anything said here."}
           </Text>
         </View>
       </View>

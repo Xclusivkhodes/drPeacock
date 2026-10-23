@@ -60,6 +60,8 @@ module.exports = {
         },
       ],
       "expo-asset",
+      "expo-image",
+      "expo-web-browser",
       [
         "expo-location",
         {

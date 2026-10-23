@@ -1,56 +1,71 @@
-# Welcome to your Expo app 👋
+# Dr. Peacock
 
-This is an [Expo](https://expo.dev) project created with [`create-expo-app`](https://www.npmjs.com/package/create-expo-app).
+Dr. Peacock is an Expo and React Native healthcare companion for Ghana and Africa. It helps someone describe symptoms, find a nearby facility, and keep a simple health record on the phone. Cloud replies come from Gemma (`google/gemma-4-31b-it`) through this app's own API routes. The phone never holds the model key.
 
-## Get started
+The app is guidance only and does not replace a doctor.
 
-1. Install dependencies
+## Requirements
 
-   ```bash
-   npm install
-   ```
+- Node.js 22 (the version this repo was revived with) and npm 10
+- For a phone build: Xcode (iOS) or Android Studio (Android), plus an [Expo development build](https://docs.expo.dev/develop/development-builds/introduction/). Expo Go is not enough — the app uses native modules (maps, audio, location, Clerk).
 
-2. Start the app
-
-   ```bash
-   npx expo start
-   ```
-
-In the output, you'll find options to open the app in a
-
-- [development build](https://docs.expo.dev/develop/development-builds/introduction/)
-- [Android emulator](https://docs.expo.dev/workflow/android-studio-emulator/)
-- [iOS simulator](https://docs.expo.dev/workflow/ios-simulator/)
-- [Expo Go](https://expo.dev/go), a limited sandbox for trying out app development with Expo
-
-You can start developing by editing the files inside the **app** directory. This project uses [file-based routing](https://docs.expo.dev/router/introduction).
-
-## Get a fresh project
-
-When you're ready, run:
+## Setup
 
 ```bash
-npm run reset-project
+npm install
+cp .env.example .env
 ```
 
-This command will move the starter code to the **app-example** directory and create a blank **app** directory where you can start developing.
+`.env` is optional for browsing the UI. Fill in the keys you actually need:
 
-### Other setup steps
+| Variable | Required for | Notes |
+| --- | --- | --- |
+| `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` | Sign-in and sign-up | Publishable Clerk key. Safe to ship in the client. |
+| `NVIDIA_API_KEY` | Symptom chat and health-baseline generation | Server only. Never prefix with `EXPO_PUBLIC_`. |
+| `GOOGLE_MAPS_API_KEY` | Map tiles in a native build | Read by `app.config.js` at build time. |
+| `GOOGLE_DIRECTIONS_API_KEY` | Turn-by-turn directions | Server only, used by `src/app/api/directions+api.ts`. |
+| `EXPO_PUBLIC_API_BASE_URL` | A standalone build calling a deployed API | Leave unset in local development. |
 
-- To set up ESLint for linting, run `npx expo lint`, or follow our guide on ["Using ESLint and Prettier"](https://docs.expo.dev/guides/using-eslint/)
-- If you'd like to set up unit testing, follow our guide on ["Unit Testing with Jest"](https://docs.expo.dev/develop/unit-testing/)
-- Learn more about the TypeScript setup in this template in our guide on ["Using TypeScript"](https://docs.expo.dev/guides/typescript/)
+Without `NVIDIA_API_KEY`, chat shows a short offline apology and onboarding still builds a local health baseline. Without the Clerk key, the welcome and onboarding screens still open; account screens will not authenticate.
 
-## Learn more
+## Run
 
-To learn more about developing your project with Expo, look at the following resources:
+```bash
+npm start          # Metro. Press w for web, a for Android, i for iOS.
+npm run web        # Expo web dev server, including API routes
+npm run android    # Native Android dev build (needs a device or emulator)
+npm run ios        # Native iOS dev build (macOS only)
+```
 
-- [Expo documentation](https://docs.expo.dev/): Learn fundamentals, or go into advanced topics with our [guides](https://docs.expo.dev/guides).
-- [Learn Expo tutorial](https://docs.expo.dev/tutorial/introduction/): Follow a step-by-step tutorial where you'll create a project that runs on Android, iOS, and the web.
+The first screen is Welcome (`Your health, our pride`) until onboarding is finished on that device. Onboarding is stored locally with AsyncStorage.
 
-## Join the community
+On the web, the directions screen does not load `react-native-maps` (that native module crashes the web dev server). It keeps the same facility card and opens Google Maps from **Start navigation**. The live map is on Android and iOS.
 
-Join our community of developers creating universal apps.
+## Check
 
-- [Expo on GitHub](https://github.com/expo/expo): View our open source platform and contribute.
-- [Discord community](https://chat.expo.dev): Chat with Expo users and ask questions.
+```bash
+npm run typecheck  # tsc --noEmit
+npm run lint       # expo lint
+npm test           # jest-expo unit tests for the offline health helpers
+npm run doctor     # expo-doctor dependency check
+```
+
+A static web bundle, which is what `web.output` is set to in `app.config.js`:
+
+```bash
+npx expo export --platform web
+```
+
+The export is written to `dist/`. It does **not** include `src/app/api/*`. Those routes run on the Expo dev server (`npm start` / `npm run web`). A production phone build that should call them needs the routes deployed (for example `eas deploy`) and `EXPO_PUBLIC_API_BASE_URL` pointed at that host. Switching `web.output` to `"server"` is required for that deploy, and it also turns on server rendering for every screen — several screens import native-only modules, so that switch needs its own pass. See the comment in `src/app/api/chat+api.ts`.
+
+## Project layout
+
+- `src/app/` — Expo Router screens and the server API routes
+- `src/components/` — shared UI (mascot, chat bubble, facility card)
+- `src/data/` — typed offline facilities, symptoms, and the fallback health baseline
+- `src/store/` — Zustand stores (profile, chat, settings), persisted where it matters offline
+- `src/lib/` — API helpers, thinking-block stripping, directions, and record summaries
+
+## Stack
+
+Expo SDK 57, React Native 0.86, Expo Router, TypeScript, NativeWind 5 / Tailwind CSS 4, Zustand, AsyncStorage, and Clerk.

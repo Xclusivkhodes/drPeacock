@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { KeyboardAvoidingView, Modal, Platform, Pressable, Text, TextInput, View } from "react-native";
 
 export interface RecordEditField {
@@ -23,14 +23,24 @@ interface RecordEditModalProps {
  * Record screen — one or more plain text inputs, no per-section custom UI.
  */
 export function RecordEditModal({ visible, title, fields, onClose, onSave }: RecordEditModalProps) {
-  const [values, setValues] = useState<Record<string, string>>({});
+  return (
+    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
+      {visible ? (
+        <RecordEditForm title={title} fields={fields} onClose={onClose} onSave={onSave} />
+      ) : null}
+    </Modal>
+  );
+}
 
-  useEffect(() => {
-    if (visible) {
-      setValues(Object.fromEntries(fields.map((field) => [field.key, field.value])));
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [visible]);
+function RecordEditForm({
+  title,
+  fields,
+  onClose,
+  onSave,
+}: Omit<RecordEditModalProps, "visible">) {
+  const [values, setValues] = useState<Record<string, string>>(() =>
+    Object.fromEntries(fields.map((field) => [field.key, field.value])),
+  );
 
   const handleSave = () => {
     onSave(values);
@@ -38,7 +48,6 @@ export function RecordEditModal({ visible, title, fields, onClose, onSave }: Rec
   };
 
   return (
-    <Modal visible={visible} transparent animationType="slide" onRequestClose={onClose}>
       <KeyboardAvoidingView className="flex-1 justify-end" behavior={Platform.OS === "ios" ? "padding" : undefined}>
         <Pressable className="absolute inset-0 bg-black/40" onPress={onClose} />
         <View className="gap-4 rounded-tl-[24px] rounded-tr-[24px] bg-bg-page px-5 pb-8 pt-6">
@@ -69,6 +78,5 @@ export function RecordEditModal({ visible, title, fields, onClose, onSave }: Rec
           </View>
         </View>
       </KeyboardAvoidingView>
-    </Modal>
   );
 }
