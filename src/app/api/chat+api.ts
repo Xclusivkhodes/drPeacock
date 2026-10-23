@@ -5,15 +5,13 @@ import { stripThinking } from "@/lib/thinking";
 /**
  * Cloud chat inference for Dr. Peacock. Runs server-side only — this file is
  * an Expo Router API route (never bundled into the client app), so
- * process.env.NVIDIA_API_KEY is safe here. It must NEVER be prefixed with
+ * process.env.AI_STUDIO_API_KEY is safe here. It must NEVER be prefixed with
  * EXPO_PUBLIC_ (that prefix is what tells Expo to inline a value into the
  * client bundle) and must never be returned in a response body.
  *
- * NVIDIA's hosted API (integrate.api.nvidia.com) is an OpenAI-compatible
- * chat-completions endpoint (it runs on vLLM's OpenAI server under the hood),
- * which is why the request/response shapes below look like OpenAI's rather
- * than Gemini's `contents`/`candidates` shape used by the old Google AI
- * Studio integration.
+ * Google AI Studio's Gemma endpoint is the Generative Language API
+ * (`generateContent`). The key is sent as `x-goog-api-key`, not in the URL,
+ * so it does not land in access logs.
  *
  * During local development (`expo start --dev-client`), the dev server
  * already executes this route for the connected native app — no extra config
@@ -26,8 +24,8 @@ import { stripThinking } from "@/lib/thinking";
  * (expo-audio, expo-image-picker) — that's a separate change to make
  * carefully when deploying, not a pure config flip.
  */
-const NVIDIA_MODEL = "google/gemma-4-31b-it";
-const NVIDIA_URL = "https://integrate.api.nvidia.com/v1/chat/completions";
+const AI_STUDIO_MODEL = "gemma-4-e2b-it";
+const AI_STUDIO_URL = `https://generativelanguage.googleapis.com/v1beta/models/${AI_STUDIO_MODEL}:generateContent`;
 const REQUEST_TIMEOUT_MS = 15_000;
 
 interface IncomingMessage {
@@ -49,22 +47,22 @@ interface ChatRequestBody {
   image?: IncomingImage;
 }
 
-type NvidiaContentPart = { type: "text"; text: string } | { type: "image_url"; image_url: { url: string } };
+type GeminiPart = { text: string } | { inline_data: { mime_type: string; data: string } };
 
-interface NvidiaMessage {
-  role: "system" | "user" | "assistant";
-  content: string | NvidiaContentPart[];
+interface GeminiContent {
+  role: "user" | "model";
+  parts: GeminiPart[];
 }
 
-interface NvidiaResponse {
-  choices?: { message?: { content?: string } }[];
-  error?: { message?: string } | string;
+interface GeminiResponse {
+  candidates?: { content?: { parts?: { text?: string }[] } }[];
+  error?: { message?: string };
 }
 
 export async function POST(request: Request): Promise<Response> {
-  const apiKey = process.env.NVIDIA_API_KEY;
+  const apiKey = process.env.AI_STUDIO_API_KEY;
   if (!apiKey) {
-    return Response.json({ error: "Server is missing NVIDIA_API_KEY." }, { status: 500 });
+    return Response.json({ error: "Server is missing AI_STUDIO_API_KEY." }, { status: 500 });
   }
 
   let body: ChatRequestBody;
@@ -82,58 +80,58 @@ export async function POST(request: Request): Promise<Response> {
   const profile = body.profile ?? null;
   const image = body.image;
 
-  const nvidiaMessages: NvidiaMessage[] = [
-    { role: "system", content: buildChatSystemPrompt(profile, language) },
-    ...messages
-      .filter((message) => typeof message.content === "string" && message.content.trim().length > 0)
-      .map((message, index, filtered) => {
-        const role: "user" | "assistant" = message.role === "assistant" ? "assistant" : "user";
-        const isLast = index === filtered.length - 1;
-        // Only the most recent message's photo is attached as real image
-        // data — see lib/gemma.ts for why (older attachments are described
-        // as text only).
-        if (isLast && image) {
-          const parts: NvidiaContentPart[] = [
-            { type: "text", text: message.content },
-            { type: "image_url", image_url: { url: `data:${image.mimeType};base64,${image.data}` } },
-          ];
-          return { role, content: parts };
-        }
-        return { role, content: message.content };
-      }),
-  ];
+  const contents: GeminiContent[] = messages
+    .filter((message) => typeof message.content === "string" && message.content.trim().length > 0)
+    .map((message, index, filtered) => {
+      const role: "user" | "model" = message.role === "assistant" ? "model" : "user";
+      const isLast = index === filtered.length - 1;
+      // Only the most recent message's photo is attached as real image
+      // data — see lib/gemma.ts for why (older attachments are described
+      // as text only).
+      if (isLast && image?.data && image.mimeType) {
+        const parts: GeminiPart[] = [
+          { text: message.content },
+          { inline_data: { mime_type: image.mimeType, data: image.data } },
+        ];
+        return { role, parts };
+      }
+      return { role, parts: [{ text: message.content }] };
+    });
 
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), REQUEST_TIMEOUT_MS);
 
   try {
-    const response = await fetch(NVIDIA_URL, {
+    const response = await fetch(AI_STUDIO_URL, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        "x-goog-api-key": apiKey,
       },
       body: JSON.stringify({
-        model: NVIDIA_MODEL,
-        messages: nvidiaMessages,
-        temperature: 1.0,
-        top_p: 0.95,
-        top_k: 64,
-        max_tokens: 768,
-        stream: false,
+        systemInstruction: { parts: [{ text: buildChatSystemPrompt(profile, language) }] },
+        contents,
+        generationConfig: {
+          temperature: 1.0,
+          topP: 0.95,
+          topK: 64,
+          maxOutputTokens: 768,
+        },
       }),
       signal: controller.signal,
     });
 
-    const data: NvidiaResponse = await response.json();
+    const data: GeminiResponse = await response.json();
     if (!response.ok) {
-      const errorMessage = typeof data.error === "string" ? data.error : data.error?.message;
-      return Response.json({ error: errorMessage || `NVIDIA API request failed with status ${response.status}` }, { status: 502 });
+      return Response.json(
+        { error: data.error?.message || `AI Studio request failed with status ${response.status}` },
+        { status: 502 },
+      );
     }
 
-    const rawText = data.choices?.[0]?.message?.content ?? "";
+    const rawText = data.candidates?.[0]?.content?.parts?.map((part) => part.text ?? "").join("") ?? "";
     if (!rawText) {
-      return Response.json({ error: "NVIDIA API returned no content." }, { status: 502 });
+      return Response.json({ error: "AI Studio returned no content." }, { status: 502 });
     }
 
     // Applied here too (not just client-side) so raw reasoning never leaves
@@ -141,7 +139,7 @@ export async function POST(request: Request): Promise<Response> {
     const reply = stripThinking(rawText);
     return Response.json({ reply });
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Unknown error calling the NVIDIA API.";
+    const message = error instanceof Error ? error.message : "Unknown error calling AI Studio.";
     return Response.json({ error: message }, { status: 502 });
   } finally {
     clearTimeout(timeoutId);

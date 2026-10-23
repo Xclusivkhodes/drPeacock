@@ -64,7 +64,7 @@ export function parseBaselineCards(raw: string): BaselineCard[] {
   const jsonText = match ? match[0] : raw;
   const parsed: unknown = JSON.parse(jsonText);
   if (!Array.isArray(parsed)) {
-    throw new Error("NVIDIA API response was not a JSON array");
+    throw new Error("Gemma response was not a JSON array");
   }
   const cards = parsed
     .filter(
@@ -73,7 +73,7 @@ export function parseBaselineCards(raw: string): BaselineCard[] {
     )
     .map((item) => ({ title: item.title.trim(), desc: item.desc.trim() }));
   if (!cards.length) {
-    throw new Error("NVIDIA API response contained no valid cards");
+    throw new Error("Gemma response contained no valid cards");
   }
   return cards;
 }

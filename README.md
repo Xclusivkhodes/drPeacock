@@ -1,6 +1,6 @@
 # Dr. Peacock
 
-Dr. Peacock is an Expo and React Native healthcare companion for Ghana and Africa. It helps someone describe symptoms, find a nearby facility, and keep a simple health record on the phone. Cloud replies come from Gemma (`google/gemma-4-31b-it`) through this app's own API routes. The phone never holds the model key.
+Dr. Peacock is an Expo and React Native healthcare companion for Ghana and Africa. It helps someone describe symptoms, find a nearby facility, and keep a simple health record on the phone. Cloud replies come from Gemma (`gemma-4-e2b-it` on Google AI Studio) through this app's own API routes. The phone never holds the model key.
 
 The app is guidance only and does not replace a doctor.
 
@@ -21,12 +21,12 @@ cp .env.example .env
 | Variable | Required for | Notes |
 | --- | --- | --- |
 | `EXPO_PUBLIC_CLERK_PUBLISHABLE_KEY` | Sign-in and sign-up | Publishable Clerk key. Safe to ship in the client. |
-| `NVIDIA_API_KEY` | Symptom chat and health-baseline generation | Server only. Never prefix with `EXPO_PUBLIC_`. |
+| `AI_STUDIO_API_KEY` | Symptom chat and health-baseline generation | Google AI Studio key. Server only. Never prefix with `EXPO_PUBLIC_`. |
 | `GOOGLE_MAPS_API_KEY` | Map tiles in a native build | Read by `app.config.js` at build time. |
 | `GOOGLE_DIRECTIONS_API_KEY` | Turn-by-turn directions | Server only, used by `src/app/api/directions+api.ts`. |
 | `EXPO_PUBLIC_API_BASE_URL` | A standalone build calling a deployed API | Leave unset in local development. |
 
-Without `NVIDIA_API_KEY`, chat shows a short offline apology and onboarding still builds a local health baseline. Without the Clerk key, the welcome and onboarding screens still open; account screens will not authenticate.
+Without `AI_STUDIO_API_KEY`, chat shows a short offline apology and onboarding still builds a local health baseline. Without the Clerk key, the welcome and onboarding screens still open; account screens will not authenticate.
 
 ## Run
 
