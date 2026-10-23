@@ -1,12 +1,14 @@
 import Constants from "expo-constants";
+import { Platform } from "react-native";
 
 /**
  * Resolves the base URL for this app's own Expo Router API routes
- * (app/api/*.ts). In development, native clients can't use a relative fetch
- * the way a browser would, so this derives the Metro dev server's LAN host
- * from expo-constants. Once an API route is deployed for real (e.g. via
- * `eas deploy`, which needs app.json's web.output set to "server"), set
- * EXPO_PUBLIC_API_BASE_URL to that deployed URL and it takes priority.
+ * (app/api/*.ts). In the browser, the page and the API routes share an
+ * origin, so that origin is used. Native clients can't use a relative fetch,
+ * so they derive the Metro dev server's LAN host from expo-constants. Once an
+ * API route is deployed for real (e.g. via `eas deploy`, which needs
+ * app.json's web.output set to "server"), set EXPO_PUBLIC_API_BASE_URL to
+ * that deployed URL and it takes priority.
  * Shared by every lib/ helper that calls one of this app's own API routes
  * (lib/gemma.ts, lib/directions.ts), so the dev/prod URL resolution logic
  * lives in exactly one place.
@@ -14,6 +16,10 @@ import Constants from "expo-constants";
 export function getApiBaseUrl(): string {
   const configured = process.env.EXPO_PUBLIC_API_BASE_URL;
   if (configured) return configured.replace(/\/+$/, "");
+
+  if (Platform.OS === "web" && typeof window !== "undefined" && window.location.origin) {
+    return window.location.origin;
+  }
 
   const hostUri = Constants.expoConfig?.hostUri;
   if (!hostUri) {

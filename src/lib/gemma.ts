@@ -4,7 +4,7 @@ import { getApiBaseUrl } from "@/lib/apiBaseUrl";
 import { stripThinking } from "@/lib/thinking";
 
 /**
- * Client-side wrappers around Dr. Peacock's cloud AI (gemma-4-e2b-it served
+ * Client-side wrappers around Dr. Peacock's cloud AI (gemma-4-31b-it served
  * through Google AI Studio). All inference happens strictly server-side, via
  * this app's own Expo Router API routes (app/api/chat+api.ts,
  * app/api/baseline+api.ts) — process.env.AI_STUDIO_API_KEY never reaches this

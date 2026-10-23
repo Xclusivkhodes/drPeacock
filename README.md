@@ -1,6 +1,6 @@
 # Dr. Peacock
 
-Dr. Peacock is an Expo and React Native healthcare companion for Ghana and Africa. It helps someone describe symptoms, find a nearby facility, and keep a simple health record on the phone. Cloud replies come from Gemma (`gemma-4-e2b-it` on Google AI Studio) through this app's own API routes. The phone never holds the model key.
+Dr. Peacock is an Expo and React Native healthcare companion for Ghana and Africa. It helps someone describe symptoms, find a nearby facility, and keep a simple health record on the phone. Cloud replies come from Gemma (`gemma-4-31b-it` on Google AI Studio) through this app's own API routes. The phone never holds the model key.
 
 The app is guidance only and does not replace a doctor.
 
