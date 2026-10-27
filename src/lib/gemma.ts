@@ -5,9 +5,9 @@ import { stripThinking } from "@/lib/thinking";
 
 /**
  * Client-side wrappers around Dr. Peacock's cloud AI (gemma-4-31b-it served
- * through the NVIDIA API). All inference happens strictly server-side, via
+ * through Google AI Studio). All inference happens strictly server-side, via
  * this app's own Expo Router API routes (app/api/chat+api.ts,
- * app/api/baseline+api.ts) — process.env.NVIDIA_API_KEY never reaches this
+ * app/api/baseline+api.ts) — process.env.AI_STUDIO_API_KEY never reaches this
  * file or the client bundle.
  */
 const MAX_CHAT_HISTORY_TURNS = 12;
@@ -59,9 +59,9 @@ export interface ChatReplyResult {
 }
 
 /** A photo attached to the patient's current turn, ready to send to
- * app/api/chat+api.ts as real image data (gemma-4-31b-it is vision-capable).
- * NVIDIA's API has no equivalent content type for audio, so voice messages
- * are still described as text only — see the fallback below. */
+ * app/api/chat+api.ts as real image data (Gemma on AI Studio is vision-capable).
+ * Voice messages have no audio part on this endpoint, so they are still
+ * described as text only — see the fallback below. */
 export interface ChatImageAttachment {
   /** Base64-encoded bytes, no `data:` prefix. */
   data: string;
@@ -73,7 +73,7 @@ export interface ChatImageAttachment {
  * multi-turn chat store is the single source of truth — see
  * store/useChatStore.ts). The last entry in `history` is the patient's
  * current turn. Forwards the trimmed history to app/api/chat+api.ts, which
- * securely calls the NVIDIA API server-side. When `currentImage` is passed
+ * securely calls Google AI Studio server-side. When `currentImage` is passed
  * (the patient just attached a photo), it's sent alongside the last message
  * as real image data; older photo attachments and any voice message are
  * described as text only.

@@ -24,7 +24,7 @@ Use the following stack:
 - Zustand
 - AsyncStorage
 - Clerk for authentication
-- `expo-dev-client` for native module support; AI inference (Gemma-4-E2B-it) runs via the cloud-based Google AI Studio API, called from server-side Expo API routes — never on-device
+- `expo-dev-client` for native module support; AI inference (Gemma-4-31B-it) runs via the cloud-based Google AI Studio API, called from server-side Expo API routes — never on-device
 - `react-native-maps` and `expo-location` for smart facility routing
 - Server-side API routes or backend functions for secrets, external database synchronization, and fallback API calls
   Do not introduce new major libraries unless there is a strong reason.
@@ -282,14 +282,14 @@ When the user asks to build a feature:
 
 ---
 
-#### AI / Gemma Agent Rules (Cloud via NVIDIA API)
+#### AI / Gemma Agent Rules (Cloud via Google AI Studio)
 
-All AI inference runs through the cloud-based NVIDIA API — never on-device, never via `llama.rn`. This covers:
+All AI inference runs through the cloud-based Google AI Studio API — never on-device, never via `llama.rn`. This covers:
 
 - Symptom checking and medical conversations (Check Symptoms chat)
 - Health-baseline generation
 - Language translation
-  Client screens never call the NVIDIA API directly — they call this app's own Expo Router API routes (`app/api/chat+api.ts`, `app/api/baseline+api.ts`), which securely call the NVIDIA API server-side using `process.env.NVIDIA_API_KEY`. That key must NEVER be prefixed with `EXPO_PUBLIC_` and must never be exposed in client-side code or a response body.
+  Client screens never call the Google API directly — they call this app's own Expo Router API routes (`app/api/chat+api.ts`, `app/api/baseline+api.ts`), which securely call Google AI Studio server-side using `process.env.AI_STUDIO_API_KEY`. That key must NEVER be prefixed with `EXPO_PUBLIC_` and must never be exposed in client-side code or a response body.
   Configure the **gemma-4-31b-it** model with default parameters (`temperature = 1.0`, `top_p = 0.95`, `top_k = 64`).
   Thinking mode (`<|think|>`) stays enabled in the system prompt — you MUST strip the `<|channel>thought` blocks (see `lib/thinking.ts`) from every API response so the user only sees the final answer, both in the UI and in multi-turn chat history.
 
@@ -346,7 +346,7 @@ Use:
 - JSON for offline facility content
 - Zustand for global state
 - AsyncStorage for heavy local persistence (critical for rural communities)
-- Cloud AI (NVIDIA API) via server-side Expo API routes, with static/offline fallbacks where a request can fail (e.g. no network)
+- Cloud AI (Google AI Studio) via server-side Expo API routes, with static/offline fallbacks where a request can fail (e.g. no network)
 
 ---
 
